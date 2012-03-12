@@ -59,12 +59,12 @@ public class PearlXPListener implements org.bukkit.event.Listener {
 				if (item.getDurability() >= 1) {
 					int level = item
 							.getDurability();
-					item.getDurability();
+					item.setDurability((short) 0);
 					xpeditor.giveExp(XPEditor.xpLookup[level]);
 					ply.sendMessage("Restoring " + XPEditor.xpLookup[level]
 							+ "xp (level 0->" + level + ")!");
 					
-				} else if (levels > 0) {
+				} else if (levels == 0) {
 					
 					if (levels > instance.getConfig().getInt("maxlevel")) {
 						levels = instance.getConfig().getInt("maxlevel");
