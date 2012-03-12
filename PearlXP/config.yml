@@ -1,0 +1,5 @@
+configversion: 1
+#D: 10 - The max number of levels that can be stored in a pearl (or the equivalent experience of level 0->x)
+maxlevel: 10
+#D: 368 - The itemid to use for the "pearl". Avoid things which can legitimately be enchanted (weapons, armor)
+itemid: 368
