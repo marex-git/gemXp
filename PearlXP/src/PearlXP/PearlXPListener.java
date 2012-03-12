@@ -13,25 +13,28 @@ public class PearlXPListener implements org.bukkit.event.Listener {
 	}
 
 	@EventHandler
-	public void onPlayerInteract(
-			org.bukkit.event.player.PlayerInteractEvent event) {
+	public void onPlayerInteract(org.bukkit.event.player.PlayerInteractEvent event) {
 		ItemStack item = event.getItem();
+		String itemname = "pearl";
+		
+		int level;
+		int levels;
+		
+		Player ply = event.getPlayer();
+		XPEditor xpeditor = new XPEditor(ply);
+		
 		if (item != null
 				&& item.getTypeId() == instance.getConfig().getInt("itemid")) {
-			
-			Player ply = event.getPlayer();
-			String itemname = "pearl";
 			
 			if (item.getTypeId() != 368) {
 				itemname = "item";
 			}
 
 			if (item.getDurability() >= 1
-					&& (event.getAction() == org.bukkit.event.block.Action.RIGHT_CLICK_BLOCK || event
-							.getAction() == org.bukkit.event.block.Action.RIGHT_CLICK_AIR)) {
+					&& (event.getAction() == org.bukkit.event.block.Action.RIGHT_CLICK_BLOCK 
+					|| event.getAction() == org.bukkit.event.block.Action.RIGHT_CLICK_AIR)) {
 				
-				int level = item
-						.getDurability();
+				level = item.getDurability();
 
 				ply.sendMessage("This " + itemname + " is imbued with "
 						+ XPEditor.xpLookup[level] + "xp (level 0->" + level
@@ -40,6 +43,7 @@ public class PearlXPListener implements org.bukkit.event.Listener {
 				
 			} else if (event.getAction() == org.bukkit.event.block.Action.RIGHT_CLICK_BLOCK
 					&& item.getTypeId() == 368) {
+				
 				ply.sendMessage("Throwing a pearl at your feet would hurt!");
 				event.setCancelled(true);
 				
@@ -52,13 +56,12 @@ public class PearlXPListener implements org.bukkit.event.Listener {
 					return;
 				}
 				
-				XPEditor xpeditor = new XPEditor(ply);
+				
 				xpeditor.recalcTotalExp();
-				int levels = xpeditor.getLevel();
+				levels = xpeditor.getLevel();
 
 				if (item.getDurability() >= 1) {
-					int level = item
-							.getDurability();
+					level = item.getDurability();
 					item.setDurability((short) 0);
 					xpeditor.giveExp(XPEditor.xpLookup[level]);
 					ply.sendMessage("Restoring " + XPEditor.xpLookup[level]
@@ -78,5 +81,7 @@ public class PearlXPListener implements org.bukkit.event.Listener {
 				}
 			}
 		}
+		
 	}
+	
 }
