@@ -1,4 +1,4 @@
-package PearlXp;
+package PearlXP;
 
 import org.bukkit.entity.Player;
 
