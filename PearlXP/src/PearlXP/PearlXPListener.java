@@ -26,12 +26,12 @@ public class PearlXPListener implements org.bukkit.event.Listener {
 				itemname = "item";
 			}
 
-			if (item.containsEnchantment(org.bukkit.enchantments.Enchantment.WATER_WORKER)
+			if (item.getDurability() >= 1
 					&& (event.getAction() == org.bukkit.event.block.Action.RIGHT_CLICK_BLOCK || event
 							.getAction() == org.bukkit.event.block.Action.RIGHT_CLICK_AIR)) {
 				
 				int level = item
-						.getEnchantmentLevel(org.bukkit.enchantments.Enchantment.WATER_WORKER);
+						.getDurability();
 
 				ply.sendMessage("This " + itemname + " is imbued with "
 						+ XPEditor.xpLookup[level] + "xp (level 0->" + level
@@ -56,10 +56,10 @@ public class PearlXPListener implements org.bukkit.event.Listener {
 				xpeditor.recalcTotalExp();
 				int levels = xpeditor.getLevel();
 
-				if (item.containsEnchantment(org.bukkit.enchantments.Enchantment.WATER_WORKER)) {
+				if (item.getDurability() >= 1) {
 					int level = item
-							.getEnchantmentLevel(org.bukkit.enchantments.Enchantment.WATER_WORKER);
-					item.removeEnchantment(org.bukkit.enchantments.Enchantment.WATER_WORKER);
+							.getDurability();
+					item.getDurability();
 					xpeditor.giveExp(XPEditor.xpLookup[level]);
 					ply.sendMessage("Restoring " + XPEditor.xpLookup[level]
 							+ "xp (level 0->" + level + ")!");
@@ -71,9 +71,7 @@ public class PearlXPListener implements org.bukkit.event.Listener {
 					}
 					
 					xpeditor.takeExp(XPEditor.xpLookup[levels]);
-					item.addUnsafeEnchantment(
-							org.bukkit.enchantments.Enchantment.WATER_WORKER,
-							levels);
+					item.setDurability((short) levels);
 					ply.sendMessage("Imbued this " + itemname + " with "
 							+ XPEditor.xpLookup[levels] + "xp (level 0->"
 							+ levels + ")!");
