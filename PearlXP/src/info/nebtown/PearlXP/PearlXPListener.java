@@ -26,7 +26,6 @@ public class PearlXPListener implements Listener {
 	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		ItemStack item = event.getItem();
-		//int itemId = instance.getConfig().getInt("itemid");
 		
 		int maxLevel = PearlXP.getMaxLevel();
 		int playerXp;
@@ -39,12 +38,21 @@ public class PearlXPListener implements Listener {
 			if (event.getAction() == Action.RIGHT_CLICK_AIR
 					|| event.getAction() == Action.RIGHT_CLICK_BLOCK) {
 				
-				event.setCancelled(true);
+				
 				
 				if (item.getDurability() != 0) {
+					// the item have stored XP
+					
+					event.setCancelled(true); // keep the item !
+					
 					sendInfo("This " + itemName + " is imbued with "
 							+ item.getDurability() + " XP!", player);
-				} else {
+					
+				} else if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+					
+					event.setCancelled(true); // keep the item !
+					
+					// the item is empty and the player clicked "on is feet"
 					sendInfo("This " + itemName + " is empty.", player);
 				}
 				
