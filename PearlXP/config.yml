@@ -1,6 +1,6 @@
 configversion: 1
 
-#D: 225 - The max number of experience points (XP) that can be stored in a pearl. (225 = lvl 10) see minecraftwiki...
+#The max number of experience points (XP) that can be stored in a pearl. (225 = lvl 10) see minecraftwiki...
 maxlevel: 225
-#D: 368 - The itemid to use for the "pearl". Avoid things which can legitimately be enchanted (weapons, armor)
+#The itemid to use for the "pearl". Avoid things which can legitimately be enchanted (weapons, armor)
 itemid: 368

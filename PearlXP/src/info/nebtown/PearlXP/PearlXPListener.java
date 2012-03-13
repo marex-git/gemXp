@@ -10,14 +10,12 @@ import org.bukkit.event.block.Action;
 
 public class PearlXPListener implements Listener {
 	
-	public PearlXP instance;
 	
 	
 	private static String itemName = "pearl";
 	private static ChatColor textColor = ChatColor.BLUE;
 
-	public PearlXPListener(PearlXP owner) {
-		instance = owner;
+	public PearlXPListener() {
 
 	}
 	
