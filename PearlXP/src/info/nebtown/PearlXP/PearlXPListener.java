@@ -69,7 +69,6 @@ public class PearlXPListener implements Listener {
 					sendInfo("+Restoring " + xpStored + " XP! You now have " 
 								+ player.getTotalExperience() + " XP!", player);
 					
-					sendInfo("Enchent lvl : " + item.getEnchantmentLevel(enchantment), player);
 					item.removeEnchantment(enchantment);
 					
 				} else { // the item is empty
