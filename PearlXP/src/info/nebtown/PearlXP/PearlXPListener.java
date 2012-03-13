@@ -1,4 +1,4 @@
-package PearlXP;
+package info.nebtown.PearlXP;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -26,14 +26,14 @@ public class PearlXPListener implements Listener {
 	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		ItemStack item = event.getItem();
-		int itemId = instance.getConfig().getInt("itemid");
+		//int itemId = instance.getConfig().getInt("itemid");
 		
-		int maxLevel;
+		int maxLevel = PearlXP.getMaxLevel();
 		int playerXp;
 		
 		Player player = event.getPlayer();
 		
-		if (item != null && item.getTypeId() == itemId) {
+		if (item != null && item.getTypeId() == PearlXP.getItemId()) {
 			
 			
 			if (event.getAction() == Action.RIGHT_CLICK_AIR
@@ -69,8 +69,6 @@ public class PearlXPListener implements Listener {
 					item.setDurability((short) 0);
 					
 				} else { // the item is empty
-					
-					maxLevel = instance.getConfig().getInt("maxlevel");
 					
 					if (player.getTotalExperience() > maxLevel) {
 						
