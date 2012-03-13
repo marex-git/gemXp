@@ -77,7 +77,7 @@ public class PearlXPListener implements Listener {
 					
 				} else { // the item is empty
 					
-					player.playEffect(player.getEyeLocation(), Effect.ENDER_SIGNAL, 0);
+					player.getWorld().playEffect(player.getEyeLocation(), Effect.ENDER_SIGNAL, 0);
 					player.playEffect(player.getEyeLocation(), Effect.EXTINGUISH, 0);
 					
 					if (player.getTotalExperience() > maxLevel) {
