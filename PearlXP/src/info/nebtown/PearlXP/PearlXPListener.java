@@ -16,12 +16,6 @@ public class PearlXPListener implements Listener {
 	
 	private static String itemName = "pearl";
 	private static ChatColor textColor = ChatColor.BLUE;
-
-	public PearlXPListener() {
-
-	}
-	
-	
 	
 	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent event) {
