@@ -2,14 +2,18 @@ package PearlXP;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.event.block.Action;
 
-public class PearlXPListener implements org.bukkit.event.Listener {
+public class PearlXPListener implements Listener {
 	
 	public PearlXP instance;
 	
 	
 	private static String itemName = "pearl";
+
 
 	public PearlXPListener(PearlXP owner) {
 		instance = owner;
@@ -19,7 +23,7 @@ public class PearlXPListener implements org.bukkit.event.Listener {
 	
 	
 	@EventHandler
-	public void onPlayerInteract(org.bukkit.event.player.PlayerInteractEvent event) {
+	public void onPlayerInteract (PlayerInteractEvent event) {
 		ItemStack item = event.getItem();
 		int itemId = instance.getConfig().getInt("itemid");
 		
@@ -31,17 +35,17 @@ public class PearlXPListener implements org.bukkit.event.Listener {
 		if (item != null && item.getTypeId() == itemId) {
 			
 			
-			if (item.getDurability() > 0 && event.getAction() == org.bukkit.event.block.Action.RIGHT_CLICK_AIR
-					|| event.getAction() == org.bukkit.event.block.Action.RIGHT_CLICK_BLOCK) {
+			if (item.getDurability() > 0 && event.getAction() == Action.RIGHT_CLICK_AIR
+					|| event.getAction() == Action.RIGHT_CLICK_BLOCK) {
 				
 				ply.sendMessage("This " + itemName + " is imbued with "
 						+ item.getDurability() + " XP!");
-				//event.setCancelled(true);
+				event.setCancelled(true);
 				
 			}
 			
-			if (event.getAction() == org.bukkit.event.block.Action.LEFT_CLICK_AIR
-					|| event.getAction() == org.bukkit.event.block.Action.LEFT_CLICK_BLOCK) {
+			if (event.getAction() == Action.LEFT_CLICK_AIR
+					|| event.getAction() == Action.LEFT_CLICK_BLOCK) {
 				
 				if (item.getAmount() > 1) {
 					ply.sendMessage("To store experience in the " + itemName
