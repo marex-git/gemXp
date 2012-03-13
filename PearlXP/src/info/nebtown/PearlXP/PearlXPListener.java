@@ -1,6 +1,7 @@
 package info.nebtown.PearlXP;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Effect;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -33,8 +34,8 @@ public class PearlXPListener implements Listener {
 		if (item != null && item.getTypeId() == PearlXP.getItemId()) {
 			
 			
-			if (event.getAction() == Action.RIGHT_CLICK_AIR
-					|| event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+			if (item.getAmount() == 1 && (event.getAction() == Action.RIGHT_CLICK_AIR
+					|| event.getAction() == Action.RIGHT_CLICK_BLOCK)) {
 				
 				
 				
@@ -69,12 +70,15 @@ public class PearlXPListener implements Listener {
 					
 					player.giveExp(item.getDurability());
 					
-					sendInfo("Restoring " + item.getDurability() + " XP! You now have " 
+					sendInfo("+Restoring " + item.getDurability() + " XP! You now have " 
 								+ player.getTotalExperience() + " XP!", player);
 					
 					item.setDurability((short) 0);
 					
 				} else { // the item is empty
+					
+					player.playEffect(player.getEyeLocation(), Effect.ENDER_SIGNAL, 0);
+					player.playEffect(player.getEyeLocation(), Effect.EXTINGUISH, 0);
 					
 					if (player.getTotalExperience() > maxLevel) {
 						
@@ -85,7 +89,7 @@ public class PearlXPListener implements Listener {
 						player.setLevel(0);
 						player.giveExp(playerXp);
 						
-						sendInfo("Imbued this " + itemName + " with "
+						sendInfo("-Imbued this " + itemName + " with "
 								+ item.getDurability() + " XP! You have " + player.getTotalExperience() + "XP left!", player);
 					} else {
 						
