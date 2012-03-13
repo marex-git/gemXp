@@ -124,6 +124,7 @@ public class PearlXPListener implements Listener {
 		
 		// Reset level to fix update bug
 		p.setTotalExperience(0);
+		p.setExp(0);
 		p.setLevel(0);
 		
 		p.giveExp(currentXp - xp);
