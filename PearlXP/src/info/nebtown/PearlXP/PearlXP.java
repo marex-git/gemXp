@@ -53,7 +53,7 @@ public class PearlXP extends org.bukkit.plugin.java.JavaPlugin {
 		setMaxLevel(this.getConfig().getInt("maxlevel"));
 		
 		// Check if a config file is missing and create it
-		if (YamlConfiguration.loadConfiguration(new File(getDataFolder(), "config.yml")).getInt("configversion",0) < 1) {
+		if (YamlConfiguration.loadConfiguration(new File(getDataFolder(), "config.yml")).getInt("configversion",0) < 2) {
 			saveResource("config.yml",true);
 			reloadConfig();
 			

@@ -1,4 +1,4 @@
-configversion: 1
+configversion: 2
 
 #The max number of experience points (XP) that can be stored in a pearl. (225 = lvl 10) see minecraftwiki...
 maxlevel: 225
