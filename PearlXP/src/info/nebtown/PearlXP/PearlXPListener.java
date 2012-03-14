@@ -18,6 +18,7 @@ public class PearlXPListener implements Listener {
 
 	private static String itemName = "pearl";
 	private static ChatColor textColor = ChatColor.BLUE;
+	private static ChatColor infoColor = ChatColor.AQUA;
 	private static Enchantment enchantment = Enchantment.OXYGEN;
 
 	@EventHandler
@@ -43,7 +44,7 @@ public class PearlXPListener implements Listener {
 					event.setUseItemInHand(Result.DENY); //Don't throw the item!
 
 					// the item is empty and the player clicked "on is feet"
-					sendInfo("This " + itemName + " is empty.", player);
+					sendInfo("This " + itemName + " is empty.", infoColor, player);
 
 				} else if (player.getTotalExperience() > 0 
 						&& (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK)) {
@@ -75,7 +76,16 @@ public class PearlXPListener implements Listener {
 
 			} else { // Contains XP
 
-				if (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) {
+				if (action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) {
+					// Show the imbued xp...
+
+					event.setUseItemInHand(Result.DENY); //Don't throw the item!
+
+					sendInfo("This " + itemName + " is imbued with "
+							+ getStoredXp(item) + " XP!", infoColor, player);
+					
+
+				} else if (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) {
 
 					// Unstack the item
 					if (item.getAmount() > 1) item = unStack(item, inventory);
@@ -87,14 +97,6 @@ public class PearlXPListener implements Listener {
 
 					// Remove all Stored xp
 					setStoredXp(0, item);
-
-				} else if (action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) {
-					// Show the imbued xp...
-
-					event.setUseItemInHand(Result.DENY); //Don't throw the item!
-
-					sendInfo("This " + itemName + " is imbued with "
-							+ getStoredXp(item) + " XP!", player);
 				}
 			}
 
@@ -108,7 +110,11 @@ public class PearlXPListener implements Listener {
 	 * @param p player to inform
 	 */
 	private void sendInfo(String s, Player p) {
-		p.sendMessage(textColor + s);
+		sendInfo(s, textColor, p);
+	}
+	
+	private void sendInfo(String s, ChatColor c, Player p) {
+		p.sendMessage(c + s);
 	}
 
 	/**
