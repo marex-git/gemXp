@@ -66,7 +66,10 @@ public class PearlXP extends org.bukkit.plugin.java.JavaPlugin {
 		logger.info(NAME + ": Plugin loading complete. Plugin enabled.");
 	}
 
-
+	@Override
+	public void onDisable() {
+		logger.info(NAME + ": Plugin disabled.");
+	}
 
 	/**
 	 * @return the maxLevel
