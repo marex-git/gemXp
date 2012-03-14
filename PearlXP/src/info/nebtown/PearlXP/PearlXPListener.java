@@ -22,7 +22,8 @@ public class PearlXPListener implements Listener {
 	
 	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent event) {
-		ItemStack item = event.getItem();
+		ItemStack item;
+		Action action = event.getAction();
 		
 		int xpToStore = 0;
 		String storeMsg = "-Imbued this " + itemName + " with ";
@@ -30,75 +31,72 @@ public class PearlXPListener implements Listener {
 		Player player = event.getPlayer();
 		PlayerInventory inventory = player.getInventory();
 		
-		if (item != null && item.getTypeId() == PearlXP.getItemId()) {
+		if (event.hasItem() && event.getItem().getTypeId() == PearlXP.getItemId()) {
 			
+			item = event.getItem();
 			
-			if (event.getAction() == Action.RIGHT_CLICK_AIR
-					|| event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-				
-				
-				
-				if (item.containsEnchantment(enchantment)) {
-					// the item have stored XP
+				if (getStoredXp(item) == 0) {
 					
-					event.setUseItemInHand(Result.DENY);
-					
-					sendInfo("This " + itemName + " is imbued with "
-							+ getStoredXp(item) + " XP!", player);
-					
-				} else if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-					
-					event.setUseItemInHand(Result.DENY);
-					
-					// the item is empty and the player clicked "on is feet"
-					sendInfo("This " + itemName + " is empty.", player);
-				}
-				
-				
-			} else if (event.getAction() == Action.LEFT_CLICK_AIR
-						|| event.getAction() == Action.LEFT_CLICK_BLOCK) {
-				
-				if (item.containsEnchantment(enchantment)) {
-					// The item is alone and has stored XP
-					
-					if (item.getAmount() > 1) item = unStack(item, inventory);
-					
-					player.giveExp(getStoredXp(item));
-					
-					sendInfo("+Restoring " + getStoredXp(item) + " XP! You now have " 
-								+ player.getTotalExperience() + " XP!", player);
-
-					// Remove all Stored xp
-					setStoredXp(0, item);
-					
-					
-				} else if (player.getTotalExperience() > 0) { 
-					// the item is empty and the player has xp
-					
-					if (item.getAmount() > 1) item = unStack(item, inventory);
-					
-					if (player.getTotalExperience() > PearlXP.getMaxLevel()) {
+					if (action == Action.RIGHT_CLICK_BLOCK) {
+						// Show the amount of XP stored
 						
-						xpToStore = PearlXP.getMaxLevel();
-						storeMsg +=  xpToStore + " XP! " + player.getTotalExperience() + "XP left!";
-					} else {
+						event.setUseItemInHand(Result.DENY); //Don't throw the item!
 						
-						xpToStore = player.getTotalExperience();
-						storeMsg += xpToStore + " XP!";
+						// the item is empty and the player clicked "on is feet"
+						sendInfo("This " + itemName + " is empty.", player);
+						
+					} else if (player.getTotalExperience() > 0 
+							&& (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK)) {
+						// Store some XP in the item
+						
+						// Unstack the item
+						if (item.getAmount() > 1) item = unStack(item, inventory);
+						
+						if (player.getTotalExperience() > PearlXP.getMaxLevel()) {
+							
+							xpToStore = PearlXP.getMaxLevel();
+							storeMsg +=  xpToStore + " XP! " + player.getTotalExperience() + "XP left!";
+						} else {
+							
+							xpToStore = player.getTotalExperience();
+							storeMsg += xpToStore + " XP!";
+						}
+						
+						setStoredXp(xpToStore, item);
+						removePlayerXp(xpToStore, player);
+						
+						// Friendly message !
+						sendInfo(storeMsg, player);
+						
+						// Visual and sound effects
+						player.getWorld().playEffect(player.getEyeLocation(), Effect.ENDER_SIGNAL, 0);
+						player.playEffect(player.getEyeLocation(), Effect.EXTINGUISH, 0);
 					}
+						
+				} else { // Contains XP
 					
-					setStoredXp(xpToStore, item);
-					removePlayerXp(xpToStore, player);
-					
-					// Friendly message !
-					sendInfo(storeMsg, player);
+					if (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) {
+						
+						// Unstack the item
+						if (item.getAmount() > 1) item = unStack(item, inventory);
+						
+						player.giveExp(getStoredXp(item));
+						
+						sendInfo("+Restoring " + getStoredXp(item) + " XP! You now have " 
+									+ player.getTotalExperience() + " XP!", player);
 
-					// Visual and sound effects
-					player.getWorld().playEffect(player.getEyeLocation(), Effect.ENDER_SIGNAL, 0);
-					player.playEffect(player.getEyeLocation(), Effect.EXTINGUISH, 0);
+						// Remove all Stored xp
+						setStoredXp(0, item);
+							
+					} else if (action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) {
+						// Show the imbued xp...
+						
+						event.setUseItemInHand(Result.DENY); //Don't throw the item!
+						
+						sendInfo("This " + itemName + " is imbued with "
+								+ getStoredXp(item) + " XP!", player);
+					}
 				}
-				
-			}
 		
 		}
 		
