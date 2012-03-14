@@ -81,6 +81,13 @@ public class PearlXP extends org.bukkit.plugin.java.JavaPlugin {
 	}
 
 	/**
+	 * @return the logger
+	 */
+	public static Logger getPluginLogger() {
+		return logger;
+	}
+
+	/**
 	 * @return the itemId
 	 */
 	public static int getItemId() {
