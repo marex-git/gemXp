@@ -4,6 +4,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Effect;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -40,14 +41,14 @@ public class PearlXPListener implements Listener {
 				if (item.containsEnchantment(enchantment)) {
 					// the item have stored XP
 					
-					event.setCancelled(true); // keep the item !
+					event.setUseItemInHand(Result.DENY);
 					
 					sendInfo("This " + itemName + " is imbued with "
 							+ getStoredXp(item) + " XP!", player);
 					
 				} else if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
 					
-					event.setCancelled(true); // keep the item !
+					event.setUseItemInHand(Result.DENY);
 					
 					// the item is empty and the player clicked "on is feet"
 					sendInfo("This " + itemName + " is empty.", player);
