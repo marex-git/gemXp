@@ -11,7 +11,6 @@
 package info.nebtown.PearlXP;
 
 import java.util.logging.Logger;
-import org.bukkit.Server;
 import java.io.File;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -42,16 +41,12 @@ public class PearlXP extends org.bukkit.plugin.java.JavaPlugin {
 	 */
 	private static int itemId;
 	
-	
-	
-	private static Server server;
 	private static Logger logger;
 
 	@Override
 	public void onEnable() {
 		
 		logger = Logger.getLogger("Minecraft");
-		server = this.getServer();
 		
 		// Initializing config options
 		itemId = this.getConfig().getInt("itemid");
@@ -66,7 +61,7 @@ public class PearlXP extends org.bukkit.plugin.java.JavaPlugin {
 			getConfig().options().copyDefaults(true);
 		}
 	
-		server.getPluginManager().registerEvents(new PearlXPListener(), this);
+		this.getServer().getPluginManager().registerEvents(new PearlXPListener(), this);
 
 		logger.info(NAME + ": Plugin loading complete. Plugin enabled.");
 	}

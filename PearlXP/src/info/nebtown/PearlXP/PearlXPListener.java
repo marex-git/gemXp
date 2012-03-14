@@ -57,11 +57,6 @@ public class PearlXPListener implements Listener {
 			} else if (event.getAction() == Action.LEFT_CLICK_AIR
 						|| event.getAction() == Action.LEFT_CLICK_BLOCK) {
 				
-				/*if (item.getAmount() > 1) {
-					
-					item = unStack(item, inventory);
-				}*/
-				
 				if (item.containsEnchantment(enchantment)) {
 					// The item is alone and has stored XP
 					
