@@ -15,59 +15,59 @@ import java.io.File;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 public class PearlXP extends org.bukkit.plugin.java.JavaPlugin {
-	
-	
+
+
 	/**
 	 * Name of the plugin
 	 */
-	
 	public static final String NAME = "PearlXP";
-	
+
 	/**
 	 * Maximum storage capacity of a item.
 	 */
-	
 	public static final int MAX_STORAGE = 32767; // max of a short
 
 	/****** Configuration options ******/
-	
+
 	/**
 	 * Configuration value of the maximum storage capacity
 	 */
 	private static int maxLevel;
-	
+
 	/**
 	 * Configuration value of the item id used
 	 */
 	private static int itemId;
-	
+
 	private static Logger logger;
 
 	@Override
 	public void onEnable() {
-		
+
 		logger = Logger.getLogger("Minecraft");
-		
+
 		// Initializing config options
 		itemId = this.getConfig().getInt("itemid");
 		setMaxLevel(this.getConfig().getInt("maxlevel"));
-		
+
 		// Check if a config file is missing and create it
-		if (YamlConfiguration.loadConfiguration(new File(getDataFolder(), "config.yml")).getInt("configversion",0) < 2) {
+		if (YamlConfiguration.loadConfiguration(new File(getDataFolder(), "config.yml"))
+				.getInt("configversion", 0) < 2) {
+
 			saveResource("config.yml",true);
 			reloadConfig();
-			
+
 		} else {
 			getConfig().options().copyDefaults(true);
 		}
-	
+
 		this.getServer().getPluginManager().registerEvents(new PearlXPListener(), this);
 
 		logger.info(NAME + ": Plugin loading complete. Plugin enabled.");
 	}
-	
-	//public void onDisable() {}
-	
+
+
+
 	/**
 	 * @return the maxLevel
 	 */
@@ -93,7 +93,7 @@ public class PearlXP extends org.bukkit.plugin.java.JavaPlugin {
 	 * @param maxLevel the maxLevel to set
 	 */
 	public static void setMaxLevel(int maxLevel) {
-		
+
 		// check if maxLevel fits in a short (2^16 - 1)
 		if (maxLevel > MAX_STORAGE) {
 			PearlXP.maxLevel = MAX_STORAGE;
@@ -103,6 +103,6 @@ public class PearlXP extends org.bukkit.plugin.java.JavaPlugin {
 			PearlXP.maxLevel = maxLevel;
 		}
 	}
-	
-	
+
+
 }
