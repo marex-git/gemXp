@@ -31,7 +31,7 @@ public class PearlXPListener implements Listener {
 		Action action = event.getAction();
 
 		int xpToStore = 0;
-		String storeMsg = "-Imbued this " + itemName + " with ";
+		String storeMsg = "Imbued this " + itemName + " with ";
 
 		Player player = event.getPlayer();
 		PlayerInventory inventory = player.getInventory();
@@ -57,7 +57,7 @@ public class PearlXPListener implements Listener {
 					if (player.getTotalExperience() > PearlXP.getMaxLevel()) {
 
 						xpToStore = PearlXP.getMaxLevel();
-						storeMsg +=  xpToStore + " XP! " + player.getTotalExperience() + "XP left!";
+						storeMsg +=  xpToStore + " XP! " + (player.getTotalExperience() - xpToStore) + "XP left!";
 					} else {
 
 						xpToStore = player.getTotalExperience();
@@ -95,7 +95,7 @@ public class PearlXPListener implements Listener {
 
 					player.giveExp(getStoredXp(item));
 
-					sendInfo("+Restoring " + getStoredXp(item) + " XP! You now have " 
+					sendInfo("Restoring " + getStoredXp(item) + " XP! You now have " 
 							+ player.getTotalExperience() + " XP!", player);
 
 
