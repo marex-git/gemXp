@@ -1,5 +1,6 @@
 package info.nebtown.PearlXP;
 
+import java.util.ListIterator;
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
 import org.bukkit.enchantments.Enchantment;
@@ -14,11 +15,14 @@ import org.bukkit.event.block.Action;
 
 public class PearlXPListener implements Listener {
 
+	public static String ERR_MSG_FULL_INV = "Your inventory is full!";
 
+	private static final ChatColor TEXT_COLOR = ChatColor.BLUE;
+	private static final ChatColor INFO_COLOR = ChatColor.AQUA;
+	private static final ChatColor ERR_COLOR = ChatColor.DARK_RED;
 
 	private static String itemName = "pearl";
-	private static ChatColor textColor = ChatColor.BLUE;
-	private static ChatColor infoColor = ChatColor.AQUA;
+
 	private static Enchantment enchantment = Enchantment.OXYGEN;
 
 	@EventHandler
@@ -44,14 +48,11 @@ public class PearlXPListener implements Listener {
 					event.setUseItemInHand(Result.DENY); //Don't throw the item!
 
 					// the item is empty and the player clicked "on is feet"
-					sendInfo("This " + itemName + " is empty.", infoColor, player);
+					sendInfo("This " + itemName + " is empty.", INFO_COLOR, player);
 
 				} else if (player.getTotalExperience() > 0 
 						&& (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK)) {
 					// Store some XP in the item
-
-					// Unstack the item
-					if (item.getAmount() > 1) item = unStack(item, inventory);
 
 					if (player.getTotalExperience() > PearlXP.getMaxLevel()) {
 
@@ -63,15 +64,20 @@ public class PearlXPListener implements Listener {
 						storeMsg += xpToStore + " XP!";
 					}
 
-					setStoredXp(xpToStore, item);
-					removePlayerXp(xpToStore, player);
+					try {
 
-					// Friendly message !
-					sendInfo(storeMsg, player);
+						storeXp(item, xpToStore, inventory);
+						removePlayerXp(xpToStore, player);
 
-					// Visual and sound effects
-					player.getWorld().playEffect(player.getEyeLocation(), Effect.ENDER_SIGNAL, 0);
-					player.playEffect(player.getEyeLocation(), Effect.EXTINGUISH, 0);
+						// Friendly message !
+						sendInfo(storeMsg, player);
+
+						// Visual and sound effects
+						player.getWorld().playEffect(player.getEyeLocation(), Effect.ENDER_SIGNAL, 0);
+						player.playEffect(player.getEyeLocation(), Effect.EXTINGUISH, 0);
+					} catch (InventoryFullException e) {
+						sendError(ERR_MSG_FULL_INV, player);
+					}
 				}
 
 			} else { // Contains XP
@@ -82,21 +88,24 @@ public class PearlXPListener implements Listener {
 					event.setUseItemInHand(Result.DENY); //Don't throw the item!
 
 					sendInfo("This " + itemName + " is imbued with "
-							+ getStoredXp(item) + " XP!", infoColor, player);
-					
+							+ getStoredXp(item) + " XP!", INFO_COLOR, player);
+
 
 				} else if (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) {
-
-					// Unstack the item
-					if (item.getAmount() > 1) item = unStack(item, inventory);
 
 					player.giveExp(getStoredXp(item));
 
 					sendInfo("+Restoring " + getStoredXp(item) + " XP! You now have " 
 							+ player.getTotalExperience() + " XP!", player);
 
-					// Remove all Stored xp
-					setStoredXp(0, item);
+
+					try {
+						// Remove all Stored xp
+						storeXp(item, 0, inventory);
+
+					} catch (InventoryFullException e) {
+						sendError(ERR_MSG_FULL_INV, player);
+					}
 				}
 			}
 
@@ -104,17 +113,22 @@ public class PearlXPListener implements Listener {
 
 	} //onPlayerInteract
 
+
+	private void sendError(String msg, Player p ) {
+		sendInfo(msg, ERR_COLOR, p);
+	}
+
 	/**
 	 * Send the player a information text with the default text color.
 	 * @param s message
 	 * @param p player to inform
 	 */
-	private void sendInfo(String s, Player p) {
-		sendInfo(s, textColor, p);
+	private void sendInfo(String msg, Player p) {
+		sendInfo(msg, TEXT_COLOR, p);
 	}
-	
-	private void sendInfo(String s, ChatColor c, Player p) {
-		p.sendMessage(c + s);
+
+	private void sendInfo(String msg, ChatColor c, Player p) {
+		p.sendMessage(c + msg);
 	}
 
 	/**
@@ -135,21 +149,75 @@ public class PearlXPListener implements Listener {
 	}
 
 	/**
-	 * Unstack one item in the inv inventory.
-	 * @param stack ItemStack to remove one item
+	 * Find biggest not full stack with the same property. Return null if nothing
+	 * found.
+	 * @param stack ItemStack with the property looking for
 	 * @param inv inventory
+	 * @return ItemStack found
 	 */
-	private ItemStack unStack(ItemStack stack, PlayerInventory inv) {
+	private ItemStack findSimilarStack(ItemStack stack, PlayerInventory inv) {
+		ListIterator<ItemStack> items = inv.iterator();
+		ItemStack item = items.next();
+		boolean found = false;
+
+		// property searched
+		int enchantLvl = stack.getEnchantmentLevel(enchantment);
+		int typeId = stack.getTypeId();
+
+
+		while (items.hasNext() && !found) {
+
+			if (item != null && item.getAmount() < 16 && item.getEnchantmentLevel(enchantment) == enchantLvl
+					&& item.getTypeId() == typeId) {
+
+				found = true;
+			} else {
+				item = items.next();
+			}
+		}
+
+		return found ? item : null;
+	}
+
+	/**
+	 * Store the given amount of XP in the item. If other uncompleted stack
+	 * exists with the correct XP the method stack them together.
+	 * 
+	 * @param item ItemStack to store XP
+	 * @param xp experience points
+	 * @param inv inventory of the player
+	 */
+	private void storeXp(ItemStack item, int xp, PlayerInventory inv) {
+		ItemStack similarStack;
+		ItemStack newItem = item.clone();
 		int slot = inv.firstEmpty();
-		ItemStack newItem = stack.clone();
 
-		// Only create one item...
-		newItem.setAmount(1);
+		setStoredXp(xp, newItem);
 
-		stack.setAmount(stack.getAmount() - 1);
-		inv.setItem(slot, newItem);
+		similarStack = findSimilarStack(newItem, inv);
 
-		return inv.getItem(slot);
+		if (similarStack != null) {
+
+			if (item.getAmount() == 1) {
+				inv.remove(item);
+			} else {
+				item.setAmount(item.getAmount() - 1);
+			}
+
+			similarStack.setAmount(similarStack.getAmount() + 1);
+
+		} else {
+
+			if (slot >= 0) {
+				// Only create one item...
+				newItem.setAmount(1);
+
+				item.setAmount(item.getAmount() - 1);
+				inv.setItem(slot, newItem);
+			} else {
+				throw new InventoryFullException();
+			}
+		}
 	}
 
 	/**
