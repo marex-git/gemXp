@@ -66,7 +66,7 @@ public class PearlXPListener implements Listener {
 
 					try {
 
-						storeXp(item, xpToStore, inventory);
+						storeXp(xpToStore, item, inventory);
 						removePlayerXp(xpToStore, player);
 
 						// Friendly message !
@@ -101,7 +101,7 @@ public class PearlXPListener implements Listener {
 
 					try {
 						// Remove all Stored xp
-						storeXp(item, 0, inventory);
+						storeXp(0, item, inventory);
 
 					} catch (InventoryFullException e) {
 						sendError(ERR_MSG_FULL_INV, player);
@@ -187,7 +187,7 @@ public class PearlXPListener implements Listener {
 	 * @param xp experience points
 	 * @param inv inventory of the player
 	 */
-	private void storeXp(ItemStack item, int xp, PlayerInventory inv) {
+	private void storeXp(int xp, ItemStack item,  PlayerInventory inv) {
 		ItemStack similarStack;
 		ItemStack newItem = item.clone();
 		int slot = inv.firstEmpty();
