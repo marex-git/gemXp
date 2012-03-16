@@ -167,7 +167,7 @@ public class PearlXPListener implements Listener {
 
 		while (items.hasNext() && !found) {
 
-			if (item != null && item.getAmount() < 16 && item.getEnchantmentLevel(enchantment) == enchantLvl
+			if (item != null && item.getAmount() < item.getMaxStackSize() && item.getEnchantmentLevel(enchantment) == enchantLvl
 					&& item.getTypeId() == typeId) {
 
 				found = true;
@@ -192,17 +192,17 @@ public class PearlXPListener implements Listener {
 		ItemStack newItem = item.clone();
 		int slot = inv.firstEmpty();
 
-		setStoredXp(xp, newItem);
+		// Remove the item used
+		if (item.getAmount() == 1) {
+			inv.remove(item);
+		} else {
+			item.setAmount(item.getAmount() - 1);
+		}
 
+		setStoredXp(xp, newItem);
 		similarStack = findSimilarStack(newItem, inv);
 
 		if (similarStack != null) {
-
-			if (item.getAmount() == 1) {
-				inv.remove(item);
-			} else {
-				item.setAmount(item.getAmount() - 1);
-			}
 
 			similarStack.setAmount(similarStack.getAmount() + 1);
 
@@ -212,7 +212,6 @@ public class PearlXPListener implements Listener {
 				// Only create one item...
 				newItem.setAmount(1);
 
-				item.setAmount(item.getAmount() - 1);
 				inv.setItem(slot, newItem);
 			} else {
 				throw new InventoryFullException();
