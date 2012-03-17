@@ -30,17 +30,17 @@ public class PearlXPListener implements Listener {
 		ItemStack item;
 		Action action = event.getAction();
 
-		int xpToStore = 0;
+		int xp = 0;
 		String storeMsg = "Imbued this " + itemName + " with ";
 
 		Player player = event.getPlayer();
 		PlayerInventory inventory = player.getInventory();
 
-		if (event.hasItem() && event.getItem().getTypeId() == PearlXP.getItemId()) {
+		if ( event.hasItem() && canContainXp(event.getItem()) ) {
 
 			item = event.getItem();
 
-			if (getStoredXp(item) == 0) {
+			if (getStoredXp(item) == 0) { // The item possess no XP
 
 				if (action == Action.RIGHT_CLICK_BLOCK) {
 					// Show the amount of XP stored
@@ -56,18 +56,18 @@ public class PearlXPListener implements Listener {
 
 					if (player.getTotalExperience() > PearlXP.getMaxLevel()) {
 
-						xpToStore = PearlXP.getMaxLevel();
-						storeMsg +=  xpToStore + " XP! " + (player.getTotalExperience() - xpToStore) + "XP left!";
+						xp = PearlXP.getMaxLevel();
+						storeMsg +=  xp + " XP! " + (player.getTotalExperience() - xp) + "XP left!";
 					} else {
 
-						xpToStore = player.getTotalExperience();
-						storeMsg += xpToStore + " XP!";
+						xp = player.getTotalExperience();
+						storeMsg += xp + " XP!";
 					}
 
 					try {
 
-						storeXp(xpToStore, item, inventory);
-						removePlayerXp(xpToStore, player);
+						storeXp(xp, item, inventory);
+						removePlayerXp(xp, player);
 
 						// Friendly message !
 						sendInfo(storeMsg, player);
@@ -83,7 +83,7 @@ public class PearlXPListener implements Listener {
 			} else { // Contains XP
 
 				if (action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) {
-					// Show the imbued xp...
+					// Show the imbued XP...
 
 					event.setUseItemInHand(Result.DENY); //Don't throw the item!
 
@@ -93,15 +93,16 @@ public class PearlXPListener implements Listener {
 
 				} else if (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) {
 
-					player.giveExp(getStoredXp(item));
-
-					sendInfo("Restoring " + getStoredXp(item) + " XP! You now have " 
-							+ player.getTotalExperience() + " XP!", player);
-
-
 					try {
-						// Remove all Stored xp
+						xp = getStoredXp(item);
+						
+						// Remove all Stored XP
 						storeXp(0, item, inventory);
+						
+						// give the player the XP
+						player.giveExp(xp);
+						sendInfo("Restoring " + xp + " XP! You now have " 
+								+ player.getTotalExperience() + " XP!", player);
 
 					} catch (InventoryFullException e) {
 						sendError(ERR_MSG_FULL_INV, player);
@@ -113,9 +114,24 @@ public class PearlXPListener implements Listener {
 
 	} //onPlayerInteract
 
+	/**
+	 * Return true if the ItemStack has the capability of storing experience points
+	 * @param stack
+	 * @return true if it can contain XP, false otherwise
+	 */
+	public boolean canContainXp(ItemStack stack) {
 
+		return stack.getTypeId() == PearlXP.getItemId();
+	}
+
+	/**
+	 * Send an error message to the player
+	 * @param msg message
+	 * @param p player
+	 */
 	private void sendError(String msg, Player p ) {
 		sendInfo(msg, ERR_COLOR, p);
+		p.playEffect(p.getLocation(), Effect.ZOMBIE_CHEW_IRON_DOOR, 0);
 	}
 
 	/**
@@ -189,34 +205,46 @@ public class PearlXPListener implements Listener {
 	 */
 	private void storeXp(int xp, ItemStack item,  PlayerInventory inv) {
 		ItemStack similarStack;
-		ItemStack newItem = item.clone();
+		ItemStack newItem;
 		int slot = inv.firstEmpty();
 
-		// Remove the item used
-		if (item.getAmount() == 1) {
-			inv.remove(item);
-		} else {
-			item.setAmount(item.getAmount() - 1);
-		}
-
+		newItem = item.clone();
 		setStoredXp(xp, newItem);
 		similarStack = findSimilarStack(newItem, inv);
+		
+		if (item.getAmount() == 1 && similarStack == null && slot < 0) {
+			
+			setStoredXp(xp, item);
+			
+		} else { // We can unstack stuff!
 
-		if (similarStack != null) {
+			if (similarStack != null) {
+				// no place to stack on top
 
-			similarStack.setAmount(similarStack.getAmount() + 1);
+				similarStack.setAmount(similarStack.getAmount() + 1);
 
-		} else {
-
-			if (slot >= 0) {
-				// Only create one item...
-				newItem.setAmount(1);
-
-				inv.setItem(slot, newItem);
 			} else {
-				throw new InventoryFullException();
+
+				if (slot >= 0) {
+					// Only create one item...
+					newItem.setAmount(1);
+
+					inv.setItem(slot, newItem);
+
+				} else {
+					// The item is in a stack and cannot be unstack
+					throw new InventoryFullException();
+				}
+			}
+
+			// Remove the item used
+			if (item.getAmount() == 1) {
+				inv.remove(item);
+			} else {
+				item.setAmount(item.getAmount() - 1);
 			}
 		}
+			
 	}
 
 	/**
