@@ -11,10 +11,9 @@
 package info.nebtown.PearlXP;
 
 import java.util.logging.Logger;
-import java.io.File;
 
 import org.bukkit.Material;
-import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.configuration.Configuration;
 
 public class PearlXP extends org.bukkit.plugin.java.JavaPlugin {
 
@@ -31,108 +30,127 @@ public class PearlXP extends org.bukkit.plugin.java.JavaPlugin {
 
 	/****** Configuration options ******/
 
-	/**
-	 * Configuration value of the maximum storage capacity
-	 */
-	private static int maxLevel;
+	private int maxLevel;
+	private int itemId;
+	private String itemName;
+	private int imbuedItem;
 
-	/**
-	 * Configuration value of the item id used
-	 */
-	private static int itemId;
-	
-	/**
-	 * Configuration value of the item name to display
-	 */
-	private static String itemName;
-	
-	/**
-	 * Configuration value of the imbue item appearance
-	 */
-	private static int imbuedItem;
-
-	private static Logger logger;
+	// the plugin logger
+	private Logger logger;
 
 	@Override
 	public void onEnable() {
 
 		logger = Logger.getLogger("Minecraft");
-		
-		// Check if a config file is missing and create it
-		if (YamlConfiguration.loadConfiguration(new File(getDataFolder(), "config.yml"))
-				.getInt("configversion", 0) < 3) {
+		loadConfig();
+		new PearlXPListener(this);
 
-			saveResource("config.yml",true);
-			reloadConfig();
-
-		} else {
-			getConfig().options().copyDefaults(true);
-		}
-
-		// Initializing config options
-		itemId = this.getConfig().getInt("itemid", Material.ENDER_PEARL.getId());
-		setMaxLevel(this.getConfig().getInt("maxlevel", 225));
-		itemName = this.getConfig().getString("itemname", "soul gem");
-		imbuedItem = (this.getConfig().getInt("imbued_appearance", Material.EYE_OF_ENDER.getId()));
-
-		this.getServer().getPluginManager().registerEvents(new PearlXPListener(), this);
-
-		logger.info(NAME + ": Plugin loading complete. Plugin enabled.");
+		logInfo("Plugin loading complete. Plugin enabled.");
 	}
 
 	@Override
 	public void onDisable() {
-		logger.info(NAME + ": Plugin disabled.");
+		logInfo("Plugin disabled.");
 	}
 
 	/**
-	 * @return the maxLevel
+	 * Load the default configuration files and set the variables accordingly
 	 */
-	public static int getMaxLevel() {
-		return maxLevel;
+	public void loadConfig() {
+		Configuration config = this.getConfig();
+		String itemName;
+
+		if(config.getInt("configversion", 0) < 3) {
+			saveResource("config.yml", true);
+		}
+
+		setMaxLevel(config.getInt("max_level"));
+		setItemId(config.getInt("item_id"));
+		
+		// take the default item name if no config exists
+		itemName = Material.getMaterial(this.getItemId()).toString();
+		setItemName(config.getString("item_name", itemName.toLowerCase()));
+		
+		// no change of appearance if this config doesn't exists
+		setImbuedItem(config.getInt("imbued_appearance", this.getItemId()));
+
+	}
+
+	/**
+	 * Log information to the console with the "Plugin name: " prefix
+	 * @param s
+	 */
+	protected void logInfo(String s) {
+		getPluginLogger().info("[" + NAME + "] " + s);
 	}
 
 	/**
 	 * @return the logger
 	 */
-	public static Logger getPluginLogger() {
+	private Logger getPluginLogger() {
 		return logger;
+	}
+
+	/**
+	 * @return the maxLevel
+	 */
+	public int getMaxLevel() {
+		return maxLevel;
 	}
 
 	/**
 	 * @return the itemId
 	 */
-	public static int getItemId() {
+	public int getItemId() {
 		return itemId;
 	}
 
 	/**
 	 * @return the itemName
 	 */
-	public static String getItemName() {
+	public String getItemName() {
 		return itemName;
+	}
+
+
+	/**
+	 * @return the imbuedItem
+	 */
+	public int getImbuedItem() {
+		return imbuedItem;
 	}
 
 	/**
 	 * @param maxLevel the maxLevel to set
 	 */
-	public static void setMaxLevel(int maxLevel) {
-
+	private void setMaxLevel(int maxLevel) {
 		// check if maxLevel fits in a short (2^15 - 1)
 		if (maxLevel > MAX_STORAGE) {
-			PearlXP.maxLevel = MAX_STORAGE;
-			logger.info(NAME+ ": WARNING: maxLevel exceeds possible limits! Please modify your config file.");
-			logger.info(NAME+ ": Setting maxLevel to " + maxLevel);
+			this.maxLevel = MAX_STORAGE;
+			logInfo("WARNING: maxLevel exceeds possible limits! Please modify your config file.");
+			logInfo("Setting maxLevel to " + maxLevel);
 		} else { 
-			PearlXP.maxLevel = maxLevel;
+			this.maxLevel = maxLevel;
 		}
 	}
 
+	private void setItemId(int i) {
+		this.itemId = i;
+
+	}
+
 	/**
-	 * @return the imbuedItem
+	 * @param itemName the itemName to set
 	 */
-	public static int getImbuedItem() {
-		return imbuedItem;
+	private void setItemName(String itemName) {
+		this.itemName = itemName;
+	}
+
+	/**
+	 * @param imbuedItem the imbuedItem to set
+	 */
+	private void setImbuedItem(int imbuedItem) {
+		this.imbuedItem = imbuedItem;
 	}
 
 

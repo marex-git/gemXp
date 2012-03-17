@@ -21,9 +21,19 @@ public class PearlXPListener implements Listener {
 	private static final ChatColor INFO_COLOR = ChatColor.AQUA;
 	private static final ChatColor ERR_COLOR = ChatColor.DARK_RED;
 
-	private static String itemName = PearlXP.getItemName();
+
 
 	private static Enchantment enchantment = Enchantment.OXYGEN;
+
+	private PearlXP plugin;
+	private String itemName;
+
+	public PearlXPListener(PearlXP plugin) {
+		plugin.getServer().getPluginManager().registerEvents(this, plugin);
+		this.plugin = plugin;
+		this.itemName = plugin.getItemName();
+	}
+
 
 	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent event) {
@@ -54,9 +64,9 @@ public class PearlXPListener implements Listener {
 						&& (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK)) {
 					// Store some XP in the item
 
-					if (player.getTotalExperience() > PearlXP.getMaxLevel()) {
+					if (player.getTotalExperience() > plugin.getMaxLevel()) {
 
-						xp = PearlXP.getMaxLevel();
+						xp = plugin.getMaxLevel();
 						storeMsg +=  xp + " XP! " + (player.getTotalExperience() - xp) + " XP left!";
 					} else {
 
@@ -122,17 +132,16 @@ public class PearlXPListener implements Listener {
 	 * @return true if it can contain XP, false otherwise
 	 */
 	public boolean canContainXp(ItemStack stack) {
-
-		return stack.getTypeId() == PearlXP.getImbuedItem();
+		return stack.getTypeId() == plugin.getImbuedItem();
 	}
-	
+
 	/**
 	 * Return true if the ItemStack has the capability of storing experience points
 	 * @param stack
 	 * @return true if it can store XP, false otherwise
 	 */
 	public boolean canStoreXp(ItemStack stack) {
-		return stack.getTypeId() == PearlXP.getItemId();
+		return stack.getTypeId() == plugin.getItemId();
 	}
 
 	/**
@@ -280,16 +289,16 @@ public class PearlXPListener implements Listener {
 	 */
 	private void setStoredXp(int xp, ItemStack item) {
 		// check for overflow
-		if (xp > PearlXP.getMaxLevel()) {
-			xp = PearlXP.getMaxLevel();
+		if (xp > plugin.getMaxLevel()) {
+			xp = plugin.getMaxLevel();
 		}
 
 		if (xp == 0) {
 			item.removeEnchantment(enchantment);
-			item.setTypeId(PearlXP.getItemId()); // Change appearance
+			item.setTypeId(plugin.getItemId()); // Change appearance
 		} else {
 			item.addUnsafeEnchantment(enchantment, xp);
-			item.setTypeId(PearlXP.getImbuedItem()); // Change appearance
+			item.setTypeId(plugin.getImbuedItem()); // Change appearance
 		}
 	}
 
