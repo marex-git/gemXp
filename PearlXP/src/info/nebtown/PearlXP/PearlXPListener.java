@@ -21,7 +21,7 @@ public class PearlXPListener implements Listener {
 	private static final ChatColor INFO_COLOR = ChatColor.AQUA;
 	private static final ChatColor ERR_COLOR = ChatColor.DARK_RED;
 
-	private static String itemName = "pearl";
+	private static String itemName = PearlXP.getItemName();
 
 	private static Enchantment enchantment = Enchantment.OXYGEN;
 
@@ -36,11 +36,11 @@ public class PearlXPListener implements Listener {
 		Player player = event.getPlayer();
 		PlayerInventory inventory = player.getInventory();
 
-		if ( event.hasItem() && canContainXp(event.getItem()) ) {
+		if (event.hasItem()) {
 
 			item = event.getItem();
 
-			if (getStoredXp(item) == 0) { // The item possess no XP
+			if (canStoreXp(item) && getStoredXp(item) == 0) { // The item possess no XP
 
 				if (action == Action.RIGHT_CLICK_BLOCK) {
 					// Show the amount of XP stored
@@ -80,9 +80,10 @@ public class PearlXPListener implements Listener {
 					}
 				}
 
-			} else { // Contains XP
+			} else if (canContainXp(item)) {
 
-				if (action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) {
+				if (getStoredXp(item) > 0 && action == Action.RIGHT_CLICK_AIR 
+						|| action == Action.RIGHT_CLICK_BLOCK) {
 					// Show the imbued XP...
 
 					event.setUseItemInHand(Result.DENY); //Don't throw the item!
@@ -91,7 +92,8 @@ public class PearlXPListener implements Listener {
 							+ getStoredXp(item) + " XP!", INFO_COLOR, player);
 
 
-				} else if (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) {
+				} else if (getStoredXp(item) > 0 
+						&& (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK)) {
 
 					try {
 						xp = getStoredXp(item);
@@ -121,6 +123,10 @@ public class PearlXPListener implements Listener {
 	 */
 	public boolean canContainXp(ItemStack stack) {
 
+		return stack.getTypeId() == PearlXP.getImbuedItem();
+	}
+	
+	public boolean canStoreXp(ItemStack stack) {
 		return stack.getTypeId() == PearlXP.getItemId();
 	}
 
@@ -177,13 +183,14 @@ public class PearlXPListener implements Listener {
 		boolean found = false;
 
 		// property searched
-		int enchantLvl = stack.getEnchantmentLevel(enchantment);
+		int enchantLvl = getStoredXp(stack);
 		int typeId = stack.getTypeId();
 
 
 		while (items.hasNext() && !found) {
 
-			if (item != null && item.getAmount() < item.getMaxStackSize() && item.getEnchantmentLevel(enchantment) == enchantLvl
+			if (item != null && item.getAmount() < item.getMaxStackSize() 
+					&& getStoredXp(item) == enchantLvl
 					&& item.getTypeId() == typeId) {
 
 				found = true;
@@ -274,8 +281,10 @@ public class PearlXPListener implements Listener {
 
 		if (xp == 0) {
 			item.removeEnchantment(enchantment);
+			item.setTypeId(PearlXP.getItemId()); // Change appearance
 		} else {
 			item.addUnsafeEnchantment(enchantment, xp);
+			item.setTypeId(PearlXP.getImbuedItem()); // Change appearance
 		}
 	}
 

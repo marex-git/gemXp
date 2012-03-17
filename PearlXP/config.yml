@@ -1,6 +1,24 @@
-configversion: 2
+#
+# Default configuration file
+#
+# Remove the # before the lines you want to edit the new values. Each fields 
+# are indented, other line are comments and should not be touch.
+# Active config lines should look like this:
 
-#The max number of experience points (XP) that can be stored in a pearl. (225 = lvl 10) see minecraftwiki...
-maxlevel: 225
-#The itemid to use for the "pearl". Avoid things which can legitimately be enchanted (weapons, armor)
-itemid: 368
+configversion: 3
+
+################################################################################
+#
+# The max number of experience points (XP) that can be stored in a pearl. (225 
+# = lvl 10) see minecraftwiki...
+#
+##	maxlevel: 225
+#
+# The itemid to use for the soul gem. Avoid things which can legitimately be 
+# enchanted (weapons, armor)
+#
+##	itemid: 368
+#
+# The appearance of the soul gem when it contains XP
+#
+##	imbued_appearance: 381

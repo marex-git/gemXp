@@ -12,6 +12,8 @@ package info.nebtown.PearlXP;
 
 import java.util.logging.Logger;
 import java.io.File;
+
+import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 public class PearlXP extends org.bukkit.plugin.java.JavaPlugin {
@@ -38,6 +40,16 @@ public class PearlXP extends org.bukkit.plugin.java.JavaPlugin {
 	 * Configuration value of the item id used
 	 */
 	private static int itemId;
+	
+	/**
+	 * Configuration value of the item name to display
+	 */
+	private static String itemName;
+	
+	/**
+	 * Configuration value of the imbue item appearance
+	 */
+	private static int imbuedItem;
 
 	private static Logger logger;
 
@@ -45,14 +57,10 @@ public class PearlXP extends org.bukkit.plugin.java.JavaPlugin {
 	public void onEnable() {
 
 		logger = Logger.getLogger("Minecraft");
-
-		// Initializing config options
-		itemId = this.getConfig().getInt("itemid");
-		setMaxLevel(this.getConfig().getInt("maxlevel"));
-
+		
 		// Check if a config file is missing and create it
 		if (YamlConfiguration.loadConfiguration(new File(getDataFolder(), "config.yml"))
-				.getInt("configversion", 0) < 2) {
+				.getInt("configversion", 0) < 3) {
 
 			saveResource("config.yml",true);
 			reloadConfig();
@@ -60,6 +68,12 @@ public class PearlXP extends org.bukkit.plugin.java.JavaPlugin {
 		} else {
 			getConfig().options().copyDefaults(true);
 		}
+
+		// Initializing config options
+		itemId = this.getConfig().getInt("itemid", Material.ENDER_PEARL.getId());
+		setMaxLevel(this.getConfig().getInt("maxlevel", 225));
+		itemName = this.getConfig().getString("itemname", "soul gem");
+		imbuedItem = (this.getConfig().getInt("imbued_appearance", Material.EYE_OF_ENDER.getId()));
 
 		this.getServer().getPluginManager().registerEvents(new PearlXPListener(), this);
 
@@ -93,6 +107,13 @@ public class PearlXP extends org.bukkit.plugin.java.JavaPlugin {
 	}
 
 	/**
+	 * @return the itemName
+	 */
+	public static String getItemName() {
+		return itemName;
+	}
+
+	/**
 	 * @param maxLevel the maxLevel to set
 	 */
 	public static void setMaxLevel(int maxLevel) {
@@ -105,6 +126,13 @@ public class PearlXP extends org.bukkit.plugin.java.JavaPlugin {
 		} else { 
 			PearlXP.maxLevel = maxLevel;
 		}
+	}
+
+	/**
+	 * @return the imbuedItem
+	 */
+	public static int getImbuedItem() {
+		return imbuedItem;
 	}
 
 
