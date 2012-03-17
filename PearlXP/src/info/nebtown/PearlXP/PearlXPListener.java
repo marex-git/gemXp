@@ -57,7 +57,7 @@ public class PearlXPListener implements Listener {
 					if (player.getTotalExperience() > PearlXP.getMaxLevel()) {
 
 						xp = PearlXP.getMaxLevel();
-						storeMsg +=  xp + " XP! " + (player.getTotalExperience() - xp) + "XP left!";
+						storeMsg +=  xp + " XP! " + (player.getTotalExperience() - xp) + " XP left!";
 					} else {
 
 						xp = player.getTotalExperience();
