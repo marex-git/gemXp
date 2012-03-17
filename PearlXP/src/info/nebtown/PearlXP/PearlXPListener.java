@@ -95,10 +95,10 @@ public class PearlXPListener implements Listener {
 
 					try {
 						xp = getStoredXp(item);
-						
+
 						// Remove all Stored XP
 						storeXp(0, item, inventory);
-						
+
 						// give the player the XP
 						player.giveExp(xp);
 						sendInfo("Restoring " + xp + " XP! You now have " 
@@ -211,11 +211,11 @@ public class PearlXPListener implements Listener {
 		newItem = item.clone();
 		setStoredXp(xp, newItem);
 		similarStack = findSimilarStack(newItem, inv);
-		
+
 		if (item.getAmount() == 1 && similarStack == null && slot < 0) {
-			
+
 			setStoredXp(xp, item);
-			
+
 		} else { // We can unstack stuff!
 
 			if (similarStack != null) {
@@ -244,7 +244,7 @@ public class PearlXPListener implements Listener {
 				item.setAmount(item.getAmount() - 1);
 			}
 		}
-			
+
 	}
 
 	/**
