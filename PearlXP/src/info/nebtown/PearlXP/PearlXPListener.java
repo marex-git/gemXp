@@ -117,7 +117,7 @@ public class PearlXPListener implements Listener {
 	} //onPlayerInteract
 
 	/**
-	 * Return true if the ItemStack has the capability of storing experience points
+	 * Return true if the ItemStack has the capability of containing experience points
 	 * @param stack
 	 * @return true if it can contain XP, false otherwise
 	 */
@@ -126,6 +126,11 @@ public class PearlXPListener implements Listener {
 		return stack.getTypeId() == PearlXP.getImbuedItem();
 	}
 	
+	/**
+	 * Return true if the ItemStack has the capability of storing experience points
+	 * @param stack
+	 * @return true if it can store XP, false otherwise
+	 */
 	public boolean canStoreXp(ItemStack stack) {
 		return stack.getTypeId() == PearlXP.getItemId();
 	}
