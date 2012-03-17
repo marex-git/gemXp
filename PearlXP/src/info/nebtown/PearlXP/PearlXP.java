@@ -73,17 +73,17 @@ public class PearlXP extends org.bukkit.plugin.java.JavaPlugin {
 		Configuration config = this.getConfig();
 		String itemName;
 
-		if(config.getInt("configversion", 0) < 3) {
+		if (config.getInt("configversion", 0) < 3) {
 			saveResource("config.yml", true);
 		}
 
 		setMaxLevel(config.getInt("max_level"));
 		setItemId(config.getInt("item_id"));
-		
+
 		// take the default item name if no config exists
 		itemName = Material.getMaterial(this.getItemId()).toString();
 		setItemName(config.getString("item_name", itemName.toLowerCase()));
-		
+
 		// no change of appearance if this config doesn't exists
 		setImbuedItem(config.getInt("imbued_appearance", this.getItemId()));
 
