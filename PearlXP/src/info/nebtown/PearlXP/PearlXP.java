@@ -1,7 +1,7 @@
 /**
  * Rewrites of the original PearlXP created by Nebual of nebtown.info in March 2012.
  * 
- * Small plugin to enable the storage of experience points in an item à la soul gem.
+ * Small plugin to enable the storage of experience points in an item.
  * 
  * write by: Marex, Zonta.
  * 
@@ -32,12 +32,6 @@ import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.ConfigurationSection;
 
 public class PearlXP extends org.bukkit.plugin.java.JavaPlugin {
-
-
-	/**
-	 * Name of the plugin
-	 */
-	public static final String NAME = "PearlXP";
 
 	/**
 	 * Maximum storage capacity of a item.
@@ -99,6 +93,8 @@ public class PearlXP extends org.bukkit.plugin.java.JavaPlugin {
 
 		if (config.getInt("configversion", 0) < 3) {
 			saveResource("config.yml", true);
+			logInfo("New config file created, you should check if your " +
+					"configurations are correct!");
 		}
 
 		setMaxLevel(config.getInt("max_level"));
@@ -128,7 +124,7 @@ public class PearlXP extends org.bukkit.plugin.java.JavaPlugin {
 	 * @param s
 	 */
 	protected void logInfo(String s) {
-		getPluginLogger().info("[" + NAME + "] " + s);
+		getPluginLogger().info("[" + this.toString() + "] " + s);
 	}
 
 	/**
