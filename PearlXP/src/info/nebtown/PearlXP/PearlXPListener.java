@@ -17,6 +17,8 @@
  */
 package info.nebtown.PearlXP;
 
+import info.nebtown.PearlXP.PearlXP.MsgKeys;
+
 import java.util.ListIterator;
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
@@ -32,23 +34,33 @@ import org.bukkit.event.block.Action;
 
 public class PearlXPListener implements Listener {
 
-	public static String ERR_MSG_FULL_INV = "Your inventory is full!";
-
 	private static final ChatColor TEXT_COLOR = ChatColor.BLUE;
 	private static final ChatColor INFO_COLOR = ChatColor.AQUA;
 	private static final ChatColor ERR_COLOR = ChatColor.DARK_RED;
-
-
 
 	private static Enchantment enchantment = Enchantment.OXYGEN;
 
 	private PearlXP plugin;
 	private String itemName;
 
+	private String invFullMsg;
+	private String infoXpMsg;
+	private String infoXpEmptyMsg;
+	private String imbueXpMsg;
+	private String restoreXpMsg;
+
 	public PearlXPListener(PearlXP plugin) {
 		plugin.getServer().getPluginManager().registerEvents(this, plugin);
+
 		this.plugin = plugin;
 		this.itemName = plugin.getItemName();
+
+		this.invFullMsg = plugin.getMessage(MsgKeys.INVENTORY_FULL);
+		this.infoXpMsg = plugin.getMessage(MsgKeys.INFO_XP);
+		this.infoXpEmptyMsg = plugin.getMessage(MsgKeys.INFO_XP_EMPTY);
+		this.imbueXpMsg = plugin.getMessage(MsgKeys.IMBUE_XP);
+		this.restoreXpMsg = plugin.getMessage(MsgKeys.RESTORE_XP);
+
 	}
 
 
@@ -58,7 +70,6 @@ public class PearlXPListener implements Listener {
 		Action action = event.getAction();
 
 		int xp = 0;
-		String storeMsg = "Imbued this " + itemName + " with ";
 
 		Player player = event.getPlayer();
 		PlayerInventory inventory = player.getInventory();
@@ -75,35 +86,31 @@ public class PearlXPListener implements Listener {
 					event.setUseItemInHand(Result.DENY); //Don't throw the item!
 
 					// the item is empty and the player clicked "on is feet"
-					sendInfo("This " + itemName + " is empty.", INFO_COLOR, player);
+					sendInfo(infoXpEmptyMsg, INFO_COLOR, player, item);
 
 				} else if (player.getTotalExperience() > 0 
 						&& (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK)) {
 					// Store some XP in the item
 
 					if (player.getTotalExperience() > plugin.getMaxLevel()) {
-
 						xp = plugin.getMaxLevel();
-						storeMsg +=  xp + " XP! " + (player.getTotalExperience() - xp) + " XP left!";
 					} else {
-
 						xp = player.getTotalExperience();
-						storeMsg += xp + " XP!";
 					}
 
 					try {
 
-						storeXp(xp, item, inventory);
+						item = storeXp(xp, item, inventory);
 						removePlayerXp(xp, player);
 
 						// Friendly message !
-						sendInfo(storeMsg, player);
+						sendInfo(imbueXpMsg, player, item);
 
 						// Visual and sound effects
 						player.getWorld().playEffect(player.getEyeLocation(), Effect.ENDER_SIGNAL, 0);
 						player.playEffect(player.getEyeLocation(), Effect.EXTINGUISH, 0);
 					} catch (InventoryFullException e) {
-						sendError(ERR_MSG_FULL_INV, player);
+						sendError(invFullMsg, player, item);
 					}
 				}
 
@@ -115,8 +122,7 @@ public class PearlXPListener implements Listener {
 
 					event.setUseItemInHand(Result.DENY); //Don't throw the item!
 
-					sendInfo("This " + itemName + " is imbued with "
-							+ getStoredXp(item) + " XP!", INFO_COLOR, player);
+					sendInfo(infoXpMsg, INFO_COLOR, player, item);
 
 
 				} else if (getStoredXp(item) > 0 
@@ -130,11 +136,10 @@ public class PearlXPListener implements Listener {
 
 						// give the player the XP
 						player.giveExp(xp);
-						sendInfo("Restoring " + xp + " XP! You now have " 
-								+ player.getTotalExperience() + " XP!", player);
+						sendInfo(restoreXpMsg, player, item);
 
 					} catch (InventoryFullException e) {
-						sendError(ERR_MSG_FULL_INV, player);
+						sendError(invFullMsg, player, item);
 					}
 				}
 			}
@@ -148,7 +153,7 @@ public class PearlXPListener implements Listener {
 	 * @param stack
 	 * @return true if it can contain XP, false otherwise
 	 */
-	public boolean canContainXp(ItemStack stack) {
+	private boolean canContainXp(ItemStack stack) {
 		return stack.getTypeId() == plugin.getImbuedItem();
 	}
 
@@ -157,17 +162,40 @@ public class PearlXPListener implements Listener {
 	 * @param stack
 	 * @return true if it can store XP, false otherwise
 	 */
-	public boolean canStoreXp(ItemStack stack) {
+	private boolean canStoreXp(ItemStack stack) {
 		return stack.getTypeId() == plugin.getItemId();
 	}
+
+
+	private String formatMsg(String msg, int xp, int playerXp) {
+		String[] values = { itemName,
+				String.valueOf(xp),
+				String.valueOf(playerXp) };
+
+		return formatMsg(msg, values);
+	}
+
+	private String formatMsg(String msg, String[] values) {
+		String[] keys = { "item_name", "xp", "player_xp" };
+
+		if (msg != null) {
+			for (int i = 0; i < keys.length && i < values.length; i++) {
+				msg = msg.replaceAll("\\$\\{" + keys[i] + "\\}", values[i]);
+			}
+		}
+
+		return msg;
+	}
+
+
 
 	/**
 	 * Send an error message to the player
 	 * @param msg message
 	 * @param p player
 	 */
-	private void sendError(String msg, Player p ) {
-		sendInfo(msg, ERR_COLOR, p);
+	private void sendError(String msg, Player p, ItemStack i ) {
+		sendInfo(msg, ERR_COLOR, p, i);
 		p.playEffect(p.getLocation(), Effect.ZOMBIE_CHEW_IRON_DOOR, 0);
 	}
 
@@ -176,12 +204,16 @@ public class PearlXPListener implements Listener {
 	 * @param s message
 	 * @param p player to inform
 	 */
-	private void sendInfo(String msg, Player p) {
-		sendInfo(msg, TEXT_COLOR, p);
+	private void sendInfo(String msg, Player p, ItemStack i) {
+		if (msg != null) {
+			sendInfo(msg, TEXT_COLOR, p, i);
+		}
 	}
 
-	private void sendInfo(String msg, ChatColor c, Player p) {
-		p.sendMessage(c + msg);
+	private void sendInfo(String msg, ChatColor c, Player p, ItemStack i) {
+		if (msg != null) {
+			p.sendMessage(c + formatMsg(msg, getStoredXp(i), p.getTotalExperience()));
+		}
 	}
 
 	/**
@@ -241,7 +273,7 @@ public class PearlXPListener implements Listener {
 	 * @param xp experience points
 	 * @param inv inventory of the player
 	 */
-	private void storeXp(int xp, ItemStack item,  PlayerInventory inv) {
+	private ItemStack storeXp(int xp, ItemStack item,  PlayerInventory inv) {
 		ItemStack similarStack;
 		ItemStack newItem;
 		int slot = inv.firstEmpty();
@@ -253,6 +285,7 @@ public class PearlXPListener implements Listener {
 		if (item.getAmount() == 1 && similarStack == null && slot < 0) {
 
 			setStoredXp(xp, item);
+			newItem = item;
 
 		} else { // We can unstack stuff!
 
@@ -282,6 +315,8 @@ public class PearlXPListener implements Listener {
 				item.setAmount(item.getAmount() - 1);
 			}
 		}
+
+		return newItem;
 
 	}
 

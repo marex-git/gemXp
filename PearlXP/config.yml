@@ -19,3 +19,10 @@ max_level: 225
 item_id: 368
 item_name: soul gem
 imbued_appearance: 381
+
+Messages:
+  inventory_full: Your inventory is full!
+  info_xp_content: This ${item_name} is imbued with ${xp} XP!
+  info_xp_empty: This ${item_name} is empty.
+  imbue_xp: This ${item_name} is imbued with ${xp} XP!
+  restore_xp: Restoring ${xp} XP! You now have ${player_xp} XP!"

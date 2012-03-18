@@ -23,10 +23,13 @@
 
 package info.nebtown.PearlXP;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 import org.bukkit.Material;
 import org.bukkit.configuration.Configuration;
+import org.bukkit.configuration.ConfigurationSection;
 
 public class PearlXP extends org.bukkit.plugin.java.JavaPlugin {
 
@@ -47,6 +50,26 @@ public class PearlXP extends org.bukkit.plugin.java.JavaPlugin {
 	private int itemId;
 	private String itemName;
 	private int imbuedItem;
+	private List<String> messages;
+
+	public enum MsgKeys { 
+
+		INVENTORY_FULL("inventory_full"),
+		INFO_XP("info_xp_content"),
+		INFO_XP_EMPTY("info_xp_empty"),
+		IMBUE_XP("imbue_xp"),
+		RESTORE_XP("restore_xp");
+
+		private String key;
+
+		MsgKeys(String key) {
+			this.key = key;
+		}
+
+		public String getKey() {
+			return key;
+		}
+	}
 
 	// the plugin logger
 	private Logger logger;
@@ -71,6 +94,7 @@ public class PearlXP extends org.bukkit.plugin.java.JavaPlugin {
 	 */
 	public void loadConfig() {
 		Configuration config = this.getConfig();
+		ConfigurationSection msgSection;
 		String itemName;
 
 		if (config.getInt("configversion", 0) < 3) {
@@ -87,6 +111,16 @@ public class PearlXP extends org.bukkit.plugin.java.JavaPlugin {
 		// no change of appearance if this config doesn't exists
 		setImbuedItem(config.getInt("imbued_appearance", this.getItemId()));
 
+		// Loading custom texts
+		msgSection = config.getConfigurationSection("Messages");
+		messages = new ArrayList<String>();
+
+		if (msgSection != null) {
+			for (MsgKeys key : MsgKeys.values()) {
+				messages.add(msgSection.getString(key.getKey(), null));
+			}
+		}
+
 	}
 
 	/**
@@ -95,6 +129,23 @@ public class PearlXP extends org.bukkit.plugin.java.JavaPlugin {
 	 */
 	protected void logInfo(String s) {
 		getPluginLogger().info("[" + NAME + "] " + s);
+	}
+
+	/**
+	 * @return the message
+	 */
+	public String getMessage(MsgKeys key) {
+		String msg = null;
+		int i = 0;
+
+		for (MsgKeys k : MsgKeys.values()) {
+			if (key == k) {
+				msg = messages.get(i);
+			}
+			i += 1;
+		}
+
+		return msg;
 	}
 
 	/**
