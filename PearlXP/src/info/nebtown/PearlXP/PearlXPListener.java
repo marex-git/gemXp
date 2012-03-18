@@ -1,5 +1,5 @@
 /**
- * Rewrites of the original PearlXP created by Nebual of nebtown.info in March 2012.
+ * Rewrite of the original PearlXP created by Nebual of nebtown.info in March 2012.
  * Copyright (C) 2012 belongs to their respective owners
  * 
  * This program is free software: you can redistribute it and/or modify
