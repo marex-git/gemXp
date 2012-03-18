@@ -166,7 +166,13 @@ public class PearlXPListener implements Listener {
 		return stack.getTypeId() == plugin.getItemId();
 	}
 
-
+	/**
+	 * Format the message to add variables values
+	 * @param msg message
+	 * @param xp item xp
+	 * @param playerXp player total xp
+	 * @return the modified string
+	 */
 	private String formatMsg(String msg, int xp, int playerXp) {
 		String[] values = { itemName,
 				String.valueOf(xp),
@@ -175,6 +181,12 @@ public class PearlXPListener implements Listener {
 		return formatMsg(msg, values);
 	}
 
+	/**
+	 * Format the message to add variables values
+	 * @param msg message
+	 * @param values Array of the values to display
+	 * @return the modified string
+	 */
 	private String formatMsg(String msg, String[] values) {
 		String[] keys = { "item_name", "xp", "player_xp" };
 
@@ -210,6 +222,11 @@ public class PearlXPListener implements Listener {
 		}
 	}
 
+	/**
+	 * Send the player a information text with the default text color.
+	 * @param s message
+	 * @param p player to inform
+	 */
 	private void sendInfo(String msg, ChatColor c, Player p, ItemStack i) {
 		if (msg != null) {
 			p.sendMessage(c + formatMsg(msg, getStoredXp(i), p.getTotalExperience()));
