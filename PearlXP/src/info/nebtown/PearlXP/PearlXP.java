@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.Material;
-import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.ConfigurationSection;
 
 public class PearlXP extends org.bukkit.plugin.java.JavaPlugin {
@@ -81,28 +80,28 @@ public class PearlXP extends org.bukkit.plugin.java.JavaPlugin {
 	 * Load the default configuration files and set the variables accordingly
 	 */
 	public void loadConfig() {
-		Configuration config = this.getConfig();
 		ConfigurationSection msgSection;
 		String itemName;
 
-		if (config.getInt("configversion", 0) < 3) {
+		if (getConfig().getInt("configversion", 0) < 3) {
 			saveResource("config.yml", true);
 			logInfo("New config file created, you should check if your " +
 					"configurations are correct!");
+			reloadConfig();
 		}
 
-		setMaxLevel(config.getInt("max_level"));
-		setItemId(config.getInt("item_id"));
+		setMaxLevel(getConfig().getInt("max_level"));
+		setItemId(getConfig().getInt("item_id"));
 
 		// take the default item name if no config exists
 		itemName = Material.getMaterial(this.getItemId()).toString();
-		setItemName(config.getString("item_name", itemName.toLowerCase()));
+		setItemName(getConfig().getString("item_name", itemName.toLowerCase()));
 
 		// no change of appearance if this config doesn't exists
-		setImbuedItem(config.getInt("imbued_appearance", this.getItemId()));
+		setImbuedItem(getConfig().getInt("imbued_appearance", this.getItemId()));
 
 		// Loading custom texts
-		msgSection = config.getConfigurationSection("Messages");
+		msgSection = getConfig().getConfigurationSection("Messages");
 		messages = new ArrayList<String>();
 
 		if (msgSection != null) {
