@@ -123,7 +123,11 @@ public class PearlXPListener implements Listener {
 
 					event.setUseItemInHand(Result.DENY); //Don't throw the item!
 
-					sendInfo(infoXpMsg, INFO_COLOR, player, item);
+					if (getStoredXp(item) == 0) {
+						sendInfo(infoXpEmptyMsg, INFO_COLOR, player, item);
+					} else {
+						sendInfo(infoXpMsg, INFO_COLOR, player, item);
+					}
 
 
 				} else if (getStoredXp(item) > 0 
