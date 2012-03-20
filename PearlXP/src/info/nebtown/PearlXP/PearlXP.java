@@ -25,6 +25,7 @@ package info.nebtown.PearlXP;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
@@ -35,6 +36,9 @@ public class PearlXP extends org.bukkit.plugin.java.JavaPlugin {
 	 * Maximum storage capacity of a item.
 	 */
 	public static final int MAX_STORAGE = 32767; // max of a short
+	
+	private static final Logger LOGGER = Logger.getLogger("Minecraft");
+	private static final String LOGGER_PREFIX = "[PearlXP]";
 
 	/****** Configuration options ******/
 
@@ -116,8 +120,8 @@ public class PearlXP extends org.bukkit.plugin.java.JavaPlugin {
 	 * Log information to the console with the "[Plugin name vX.x] " prefix
 	 * @param s text to print
 	 */
-	protected void logInfo(String s) {
-		System.out.println("[" + this.toString() + "] " + s);
+	public void logInfo(String s) {
+		LOGGER.info(String.format("%s %s", LOGGER_PREFIX, s));
 	}
 
 	/**
