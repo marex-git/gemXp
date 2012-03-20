@@ -25,7 +25,6 @@ package info.nebtown.PearlXP;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
 import org.bukkit.Material;
 import org.bukkit.configuration.Configuration;
@@ -65,13 +64,8 @@ public class PearlXP extends org.bukkit.plugin.java.JavaPlugin {
 		}
 	}
 
-	// the plugin logger
-	private Logger logger;
-
 	@Override
 	public void onEnable() {
-
-		logger = Logger.getLogger("Minecraft");
 		loadConfig();
 		new PearlXPListener(this);
 
@@ -120,15 +114,15 @@ public class PearlXP extends org.bukkit.plugin.java.JavaPlugin {
 	}
 
 	/**
-	 * Log information to the console with the "Plugin name: " prefix
-	 * @param s
+	 * Log information to the console with the "[Plugin name vX.x] " prefix
+	 * @param s text to print
 	 */
 	protected void logInfo(String s) {
-		getPluginLogger().info("[" + this.toString() + "] " + s);
+		System.out.println("[" + this.toString() + "] " + s);
 	}
 
 	/**
-	 * @return the message
+	 * @return the config message text
 	 */
 	public String getMessage(MsgKeys key) {
 		String msg = null;
@@ -142,13 +136,6 @@ public class PearlXP extends org.bukkit.plugin.java.JavaPlugin {
 		}
 
 		return msg;
-	}
-
-	/**
-	 * @return the logger
-	 */
-	private Logger getPluginLogger() {
-		return logger;
 	}
 
 	/**

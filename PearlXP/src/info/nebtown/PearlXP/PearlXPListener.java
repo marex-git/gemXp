@@ -43,6 +43,7 @@ public class PearlXPListener implements Listener {
 	private PearlXP plugin;
 	private String itemName;
 
+	// messages
 	private String invFullMsg;
 	private String infoXpMsg;
 	private String infoXpEmptyMsg;
@@ -212,7 +213,7 @@ public class PearlXPListener implements Listener {
 	}
 
 	/**
-	 * Send the player a information text with the default text color.
+	 * Send the player an information message with the default text color.
 	 * @param s message
 	 * @param p player to inform
 	 */
@@ -223,7 +224,7 @@ public class PearlXPListener implements Listener {
 	}
 
 	/**
-	 * Send the player a information text with the default text color.
+	 * Send the player an information message with the specified text color.
 	 * @param s message
 	 * @param p player to inform
 	 */
@@ -251,8 +252,9 @@ public class PearlXPListener implements Listener {
 	}
 
 	/**
-	 * Find biggest not full stack with the same property. Return null if nothing
+	 * Find first not full stack with the same property. Return null if nothing
 	 * found.
+	 * 
 	 * @param stack ItemStack with the property looking for
 	 * @param inv inventory
 	 * @return ItemStack found
@@ -307,11 +309,11 @@ public class PearlXPListener implements Listener {
 		} else { // We can unstack stuff!
 
 			if (similarStack != null) {
-				// no place to stack on top
+				// Stack on top of
 
 				similarStack.setAmount(similarStack.getAmount() + 1);
 
-			} else {
+			} else { // no similar stack
 
 				if (slot >= 0) {
 					// Only create one item...
@@ -352,9 +354,9 @@ public class PearlXPListener implements Listener {
 	}
 
 	/**
-	 * Set the amount of stored experience points in the item i to xp
+	 * Set the amount of stored experience points in the itemstack to xp (mutable)
 	 * @param xp new stored experience points
-	 * @param item
+	 * @param item ItemStack getting modified
 	 */
 	private void setStoredXp(int xp, ItemStack item) {
 		// check for overflow
