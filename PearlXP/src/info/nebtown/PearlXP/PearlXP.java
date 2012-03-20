@@ -25,6 +25,7 @@ package info.nebtown.PearlXP;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.bukkit.Material;
@@ -117,11 +118,20 @@ public class PearlXP extends org.bukkit.plugin.java.JavaPlugin {
 	}
 
 	/**
-	 * Log information to the console with the "[Plugin name] " prefix
-	 * @param s text to print
+	 * Log information to the console with the plugin prefix
+	 * @param msg text to log
 	 */
-	public void logInfo(String s) {
-		LOGGER.info(String.format("%s %s", LOGGER_PREFIX, s));
+	public void logInfo(String msg) {
+		log(Level.INFO, msg);
+	}
+	
+	/**
+	 * Log information with given level with the plugin prefix
+	 * @param level
+	 * @param msg text to log
+	 */
+	public void log(Level level, String msg) {
+		LOGGER.log(level, String.format("%s %s", LOGGER_PREFIX, msg));
 	}
 
 	/**
@@ -177,8 +187,8 @@ public class PearlXP extends org.bukkit.plugin.java.JavaPlugin {
 		// check if maxLevel fits in a short (2^15 - 1)
 		if (maxLevel > MAX_STORAGE) {
 			this.maxLevel = MAX_STORAGE;
-			logInfo("WARNING: maxLevel exceeds possible limits! Please modify your config file.");
-			logInfo("Setting maxLevel to " + maxLevel);
+			log(Level.WARNING, "maxLevel exceeds possible limits! Please modify your config file.");
+			logInfo("Setting maxLevel to " + MAX_STORAGE);
 		} else { 
 			this.maxLevel = maxLevel;
 		}
