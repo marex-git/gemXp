@@ -117,7 +117,7 @@ public class PearlXP extends org.bukkit.plugin.java.JavaPlugin {
 	}
 
 	/**
-	 * Log information to the console with the "[Plugin name vX.x] " prefix
+	 * Log information to the console with the "[Plugin name] " prefix
 	 * @param s text to print
 	 */
 	public void logInfo(String s) {
