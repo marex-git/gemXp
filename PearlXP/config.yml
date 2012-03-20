@@ -33,5 +33,5 @@ Messages:
   inventory_full: Your inventory is full!
   info_xp_content: This ${item_name} is imbued with ${xp} XP!
   info_xp_empty: This ${item_name} is empty.
-  imbue_xp: Imbued this ${item_name} with ${xp} XP! You now have ${player_xp} XP!
-  restore_xp: Restoring ${xp} XP! You now have ${player_xp} XP!
+# imbue_xp: Imbued this ${item_name} with ${xp} XP! You now have ${player_xp} XP!
+# restore_xp: Restoring ${xp} XP! You now have ${player_xp} XP!
