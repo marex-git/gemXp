@@ -12,10 +12,12 @@
 # imbued_appearance: The appearance of the soul gem when it contains XP (item ID)
 #
 # Messages: Section where you can customize the text messages sent to the player,
-#			remove lines to disable the related messages. 
+#			comment lines to disable the related messages. (comments are lines 
+#           beginning with '#' like this one)
 #
 #           Special syntax ${variable} allows you to display dynamique values like
-#           the amount of experience points a player now has (ie.: ${player_xp})
+#           the amount of experience points a player now has (ie.: ${player_xp}).
+#           Possible variables: ${item_name}, ${xp} and ${player_xp}.
 #
 
 configversion: 3
@@ -31,5 +33,5 @@ Messages:
   inventory_full: Your inventory is full!
   info_xp_content: This ${item_name} is imbued with ${xp} XP!
   info_xp_empty: This ${item_name} is empty.
-  imbue_xp: This ${item_name} is imbued with ${xp} XP!
-  restore_xp: Restoring ${xp} XP! You now have ${player_xp} XP!"
+  imbue_xp: Imbued this ${item_name} with ${xp} XP! You now have ${player_xp} XP!
+  restore_xp: Restoring ${xp} XP! You now have ${player_xp} XP!
