@@ -22,6 +22,7 @@ import info.nebtown.PearlXP.PearlXP.MsgKeys;
 import java.util.ListIterator;
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
+import org.bukkit.block.BlockFace;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Result;
@@ -30,6 +31,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.event.block.Action;
 
 public class PearlXPListener implements Listener {
@@ -132,6 +135,7 @@ public class PearlXPListener implements Listener {
 
 				} else if (getStoredXp(item) > 0 
 						&& (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK)) {
+					// Restore XP to the player
 
 					try {
 						xp = getStoredXp(item);
@@ -142,6 +146,11 @@ public class PearlXPListener implements Listener {
 						// give the player the XP
 						player.giveExp(xp);
 						sendInfo(restoreXpMsg, player, item);
+						
+						// Special effects!
+						player.playEffect(player.getEyeLocation(), Effect.GHAST_SHOOT, 0);
+						player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 2, 1));
+						player.getWorld().playEffect(player.getEyeLocation(), Effect.SMOKE, BlockFace.SELF);
 
 					} catch (InventoryFullException e) {
 						sendError(invFullMsg, player, item);
