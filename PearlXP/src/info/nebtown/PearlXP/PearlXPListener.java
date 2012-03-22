@@ -262,10 +262,7 @@ public class PearlXPListener implements Listener {
 				gem = new XpContainer(item);
 				
 				if (item.getAmount() < item.getMaxStackSize() && item.getTypeId() == typeId && gem.getStoredXp() == exp) {
-					System.out.println("Found something...");
-					System.out.println("Exp = " + gem.getStoredXp());
 					found = true;
-					
 				}
 			}
 		}
