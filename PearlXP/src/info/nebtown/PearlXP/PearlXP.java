@@ -32,21 +32,12 @@ import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 
 public class PearlXP extends org.bukkit.plugin.java.JavaPlugin {
-
-	/**
-	 * Maximum storage capacity of a item.
-	 */
-	public static final int MAX_STORAGE = 32767; // max of a short
 	
 	private static final Logger LOGGER = Logger.getLogger("Minecraft");
 	private static final String LOGGER_PREFIX = "[PearlXP]";
 
 	/****** Configuration options ******/
-
-	private int maxLevel;
-	private int itemId;
-	private String itemName;
-	private int imbuedItem;
+	
 	private List<String> messages;
 
 	public enum MsgKeys { 
@@ -95,15 +86,20 @@ public class PearlXP extends org.bukkit.plugin.java.JavaPlugin {
 			reloadConfig();
 		}
 
-		setMaxLevel(getConfig().getInt("max_level"));
-		setItemId(getConfig().getInt("item_id"));
+		// set the max experience level and check if it exceeded it...
+		if (!XpContainer.setMaxExp(getConfig().getInt("max_level"))) {
+			log(Level.WARNING, "maxLevel exceeds possible limits! Please modify your config file.");
+			logInfo("Setting maxLevel to " + XpContainer.MAX_STORAGE);
+		}
+		
+		XpContainer.setItemId(getConfig().getInt("item_id"));
 
 		// take the default item name if no config exists
-		itemName = Material.getMaterial(this.getItemId()).toString();
-		setItemName(getConfig().getString("item_name", itemName.toLowerCase()));
+		itemName = Material.getMaterial(XpContainer.getItemId()).toString();
+		XpContainer.setItemName(getConfig().getString("item_name", itemName.toLowerCase()));
 
 		// no change of appearance if this config doesn't exists
-		setImbuedItem(getConfig().getInt("imbued_appearance", this.getItemId()));
+		XpContainer.setImbuedItemId(getConfig().getInt("imbued_appearance", XpContainer.getItemId()));
 
 		// Loading custom texts
 		msgSection = getConfig().getConfigurationSection("Messages");
@@ -152,38 +148,9 @@ public class PearlXP extends org.bukkit.plugin.java.JavaPlugin {
 	}
 
 	/**
-	 * @return the maxLevel
-	 */
-	public int getMaxLevel() {
-		return maxLevel;
-	}
-
-	/**
-	 * @return the itemId
-	 */
-	public int getItemId() {
-		return itemId;
-	}
-
-	/**
-	 * @return the itemName
-	 */
-	public String getItemName() {
-		return itemName;
-	}
-
-
-	/**
-	 * @return the imbuedItem
-	 */
-	public int getImbuedItem() {
-		return imbuedItem;
-	}
-
-	/**
 	 * @param maxLevel the maxLevel to set
 	 */
-	private void setMaxLevel(int maxLevel) {
+	/*private void setMaxLevel(int maxLevel) {
 		// check if maxLevel fits in a short (2^15 - 1)
 		if (maxLevel > MAX_STORAGE) {
 			this.maxLevel = MAX_STORAGE;
@@ -192,26 +159,8 @@ public class PearlXP extends org.bukkit.plugin.java.JavaPlugin {
 		} else { 
 			this.maxLevel = maxLevel;
 		}
-	}
+	}*/
 
-	private void setItemId(int i) {
-		this.itemId = i;
-
-	}
-
-	/**
-	 * @param itemName the itemName to set
-	 */
-	private void setItemName(String itemName) {
-		this.itemName = itemName;
-	}
-
-	/**
-	 * @param imbuedItem the imbuedItem to set
-	 */
-	private void setImbuedItem(int imbuedItem) {
-		this.imbuedItem = imbuedItem;
-	}
 
 
 }

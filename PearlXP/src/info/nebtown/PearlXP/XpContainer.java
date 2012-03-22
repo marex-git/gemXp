@@ -37,27 +37,41 @@ public class XpContainer extends ItemStack {
 	private static int maxExp;
 	private static String itemName;
 
+	private ItemStack itemStack;
+
 	public XpContainer(ItemStack stack) {
 		super(stack);
+		this.itemStack = stack;
+
 	}
 
 
+
+
+	/**
+	 * Return true if the ItemStack has the capability of storing experience points
+	 * @return true if it can store XP, false otherwise
+	 */
+	public static boolean isAnXpContainer(ItemStack stack) {
+		int itemId = stack.getTypeId();
+
+		return itemId == getImbuedItemId() || itemId == getItemId();
+	}
+
 	/**
 	 * Return true if the ItemStack has the capability of containing experience points
-	 * @param stack
 	 * @return true if it can contain XP, false otherwise
 	 */
-	public boolean canContainXp(ItemStack stack) {
-		return stack.getTypeId() == getImbuedItemId();
+	public boolean canContainXp() {
+		return getTypeId() == getImbuedItemId();
 	}
 
 	/**
 	 * Return true if the ItemStack has the capability of storing experience points
-	 * @param stack
 	 * @return true if it can store XP, false otherwise
 	 */
-	public boolean canStoreXp(ItemStack stack) {
-		return stack.getTypeId() == itemId;
+	public boolean canStoreXp() {
+		return getTypeId() == getItemId();
 	}
 
 	/**
@@ -128,6 +142,14 @@ public class XpContainer extends ItemStack {
 
 
 	/**
+	 * @return the stack
+	 */
+	public ItemStack getItemStack() {
+		return itemStack;
+	}
+
+
+	/**
 	 * @param imbuedItemId the imbuedItemId to set
 	 */
 	protected static void setImbuedItemId(int imbuedItemId) {
@@ -146,13 +168,16 @@ public class XpContainer extends ItemStack {
 	/**
 	 * @param maxExp the maximum experience points cap  to set
 	 */
-	protected static void setMaxExp(int maxExp) {
+	protected static boolean setMaxExp(int maxExp) {
+		boolean result = false;
 		// check if maxLevel fits in a short (2^15 - 1)
 		if (maxExp > MAX_STORAGE) {
 			XpContainer.maxExp = MAX_STORAGE;
 		} else { 
 			XpContainer.maxExp = maxExp;
+			result = true;
 		}
+		return result;
 	}
 
 
