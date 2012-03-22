@@ -146,21 +146,4 @@ public class PearlXP extends org.bukkit.plugin.java.JavaPlugin {
 
 		return msg;
 	}
-
-	/**
-	 * @param maxLevel the maxLevel to set
-	 */
-	/*private void setMaxLevel(int maxLevel) {
-		// check if maxLevel fits in a short (2^15 - 1)
-		if (maxLevel > MAX_STORAGE) {
-			this.maxLevel = MAX_STORAGE;
-			log(Level.WARNING, "maxLevel exceeds possible limits! Please modify your config file.");
-			logInfo("Setting maxLevel to " + MAX_STORAGE);
-		} else { 
-			this.maxLevel = maxLevel;
-		}
-	}*/
-
-
-
 }
