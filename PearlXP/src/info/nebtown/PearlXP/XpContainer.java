@@ -46,8 +46,6 @@ public class XpContainer extends ItemStack {
 	}
 
 
-
-
 	/**
 	 * Return true if the ItemStack has the capability of storing experience points
 	 * @return true if it can store XP, false otherwise
@@ -72,6 +70,34 @@ public class XpContainer extends ItemStack {
 	 */
 	public boolean canStoreXp() {
 		return getTypeId() == getItemId();
+	}
+
+
+	/* (non-Javadoc)
+	 * @see org.bukkit.inventory.ItemStack#clone()
+	 */
+	@Override
+	public XpContainer clone() {
+		return new XpContainer( new ItemStack(getItemStack()) );
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.bukkit.inventory.ItemStack#getAmount()
+	 */
+	@Override
+	public int getAmount() {
+		return getItemStack().getAmount();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.bukkit.inventory.ItemStack#setAmount(int)
+	 */
+	@Override
+	public void setAmount(int i) {
+		getItemStack().setAmount(i);
 	}
 
 	/**

@@ -137,7 +137,7 @@ public class PearlXPListener implements Listener {
 						// give the player the XP
 						player.giveExp(xp);
 						sendInfo(restoreXpMsg, player, gem);
-						
+
 						// Special effects!
 						player.playEffect(player.getEyeLocation(), Effect.GHAST_SHOOT, 0);
 						player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 2, 1));
@@ -257,10 +257,10 @@ public class PearlXPListener implements Listener {
 
 		while (items.hasNext() && !found) {
 			item = items.next();
-			
+
 			if (item != null) {
 				gem = new XpContainer(item);
-				
+
 				if (item.getAmount() < item.getMaxStackSize() && item.getTypeId() == typeId && gem.getStoredXp() == exp) {
 					found = true;
 				}
@@ -280,17 +280,17 @@ public class PearlXPListener implements Listener {
 	 */
 	private XpContainer storeXp(int xp, XpContainer item,  PlayerInventory inv) {
 		ItemStack similarStack;
-		XpContainer newItem;
+		XpContainer newGem;
 		int slot = inv.firstEmpty();
 
-		newItem = new XpContainer(item.clone());
-		newItem.setStoredXp(xp);
-		similarStack = findSimilarStack(xp, newItem, inv);
+		newGem = new XpContainer(item.clone());
+		newGem.setStoredXp(xp);
+		similarStack = findSimilarStack(xp, newGem, inv);
 
 		if (item.getAmount() == 1 && similarStack == null && slot < 0) {
 
 			item.setStoredXp(xp);
-			newItem = item;
+			newGem = item;
 
 		} else { // We can unstack stuff!
 
@@ -303,9 +303,10 @@ public class PearlXPListener implements Listener {
 
 				if (slot >= 0) {
 					// Only create one item...
-					newItem.setAmount(1);
+					newGem.setAmount(1);
 
-					inv.setItem(slot, newItem);
+					inv.setItem(slot, newGem);
+					System.out.println("Only create one " + item.getAmount());
 
 				} else {
 					// The item is in a stack and cannot be unstack
@@ -317,11 +318,13 @@ public class PearlXPListener implements Listener {
 			if (item.getAmount() == 1) {
 				inv.setItemInHand(null);
 			} else {
-				item.getItemStack().setAmount(item.getAmount() - 1);
+				System.out.println("deleting " + item.getAmount());
+				item.setAmount(item.getAmount() - 1);
+
 			}
 		}
 
-		return newItem;
+		return newGem;
 
 	}
 
