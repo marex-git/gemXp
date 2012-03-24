@@ -20,6 +20,7 @@ package info.nebtown.PearlXP;
 import info.nebtown.PearlXP.PearlXP.MsgKeys;
 
 import java.util.ListIterator;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
 import org.bukkit.block.BlockFace;
@@ -27,12 +28,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.event.block.Action;
 
 public class PearlXPListener implements Listener {
 
@@ -152,6 +154,37 @@ public class PearlXPListener implements Listener {
 		}
 
 	} //onPlayerInteract
+
+	@EventHandler
+	public void onInventoryClicked(InventoryClickEvent event) {
+		XpContainer clickedGem;
+		XpContainer cursorGem;
+
+		if(XpContainer.isAnXpContainer(event.getCurrentItem()) 
+				&& event.getSlot() >= 0) {
+
+			clickedGem = new XpContainer(event.getCurrentItem());
+
+			if (event.isShiftClick()) {
+				event.setCancelled(true);
+				// TODO stack similar stack
+
+			} else if (XpContainer.isAnXpContainer(event.getCursor())) {
+				event.setCancelled(true);
+				cursorGem = new XpContainer(event.getCursor());
+
+				if (event.isLeftClick()) {
+
+					// TODO check if stacking is possible and stack, leftover are on cursor
+				} else { // right clicked
+
+					// TODO  check if stacking is possible and stack
+				}
+			}
+
+		}
+
+	}
 
 	/**
 	 * Format the message to add variables values
