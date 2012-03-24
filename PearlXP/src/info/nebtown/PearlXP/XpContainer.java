@@ -51,9 +51,15 @@ public class XpContainer extends ItemStack {
 	 * @return true if it can store XP, false otherwise
 	 */
 	public static boolean isAnXpContainer(ItemStack stack) {
-		int itemId = stack.getTypeId();
+		int itemId = 0;
+		boolean container = false;
+		
+		if (stack != null) {
+			itemId = stack.getTypeId();
+			container = itemId == getImbuedItemId() || itemId == getItemId();
+		}
 
-		return itemId == getImbuedItemId() || itemId == getItemId();
+		return container;
 	}
 
 	/**
