@@ -19,8 +19,6 @@ package info.nebtown.PearlXP;
 
 import info.nebtown.PearlXP.PearlXP.MsgKeys;
 
-import java.util.ListIterator;
-
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
 import org.bukkit.block.BlockFace;
@@ -31,6 +29,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.potion.PotionEffect;
@@ -274,33 +273,54 @@ public class PearlXPListener implements Listener {
 	 * Find first not full stack with the same property. Return null if nothing
 	 * found.
 	 * 
-	 * @param stack ItemStack with the property looking for
+	 * @param stack {@link XpContainer} with the property looking for
 	 * @param inv inventory
 	 * @return ItemStack found
 	 */
-	private ItemStack findSimilarStack(int exp, XpContainer stack, PlayerInventory inv) {
-		ListIterator<ItemStack> items = inv.iterator();
-		ItemStack item = null;
-		XpContainer gem;
+	private XpContainer findSimilarStack(XpContainer stack, Inventory inv) {
+		return findSimilarStack(stack, inv, 0, inv.getSize());
+	}
+	
+	/**
+	 * Find the first not full stack of {@link XpContainer} with the same property starting at start.
+ 	 * @param stack {@link XpContainer} with the property looking for
+	 * @param inv inventory
+	 * @param start the index to start the search
+	 * @return the XpContainer found or null if nothing found
+	 */
+	private XpContainer findSimilarStack(XpContainer stack, Inventory inv, int start) {
+		return findSimilarStack(stack, inv, start, inv.getSize());
+	}
+	
+	
+	/**
+	 * Find the first not full stack of XpContainer with the same property starting at start
+	 * and ending at the index stop.
+	 * 
+	 * @param stack {@link XpContainer} with the property looking for
+	 * @param inv inventory
+	 * @param start the index to start the search
+	 * @param stop
+	 * @return the XpContainer found or null if nothing found
+	 */
+	private XpContainer findSimilarStack(XpContainer stack, Inventory inv, int start, int stop) {
+		ItemStack[] items = inv.getContents();
+		XpContainer gem = null;
 		boolean found = false;
-
-		// property searched
-		int typeId = stack.getTypeId();
-
-
-		while (items.hasNext() && !found) {
-			item = items.next();
-
-			if (item != null) {
-				gem = new XpContainer(item);
-
-				if (item.getAmount() < item.getMaxStackSize() && item.getTypeId() == typeId && gem.getStoredXp() == exp) {
+		
+		if (stop > items.length) stop = items.length;
+		
+		for (int i = start; i < stop && !found; i++) {
+			if (items[i] != null) {
+				gem = new XpContainer(items[i]);
+				
+				if (gem.getAmount() < gem.getMaxStackSize() && gem.equals(stack)) {
 					found = true;
 				}
 			}
 		}
 
-		return found ? item : null;
+		return found ? gem : null;
 	}
 
 	/**
@@ -312,13 +332,13 @@ public class PearlXPListener implements Listener {
 	 * @param inv inventory of the player
 	 */
 	private XpContainer storeXp(int xp, XpContainer item,  PlayerInventory inv) {
-		ItemStack similarStack;
+		XpContainer similarStack;
 		XpContainer newGem;
 		int slot = inv.firstEmpty();
 
 		newGem = new XpContainer(item.clone());
 		newGem.setStoredXp(xp);
-		similarStack = findSimilarStack(xp, newGem, inv);
+		similarStack = findSimilarStack(newGem, inv);
 
 		if (item.getAmount() == 1 && similarStack == null && slot < 0) {
 

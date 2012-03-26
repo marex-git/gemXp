@@ -221,4 +221,28 @@ public class XpContainer extends ItemStack {
 	}
 
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		boolean result = false;
+		
+		if (this == obj)
+			return true;
+		if (getClass() != obj.getClass())
+			return false;
+		
+		XpContainer other = (XpContainer) obj;
+		
+		if (other.canContainXp() == this.canContainXp() 
+				&& other.canStoreXp() == this.canStoreXp()
+				&& other.getStoredXp() == this.getStoredXp()) {
+			result = true;
+		}
+		
+		return result;
+	}
+
+
 }
