@@ -1,9 +1,11 @@
 /**
- * Rewrite of the original PearlXP created by Nebual of nebtown.info in March 2012.
- * 
  * Small plugin to enable the storage of experience points in an item.
  * 
+ * Rewrite of the original PearlXP created by Nebual of nebtown.info in March 2012.
+ * 
  * rewrite by: Marex, Zonta.
+ * 
+ * contact us at : plugins@x-dns.org
  * 
  * Copyright (C) 2012 belongs to their respective owners
  * 
@@ -100,6 +102,15 @@ public class PearlXP extends org.bukkit.plugin.java.JavaPlugin {
 
 		// no change of appearance if this config doesn't exists
 		XpContainer.setImbuedItemId(getConfig().getInt("imbued_appearance", XpContainer.getItemId()));
+		
+		// set the default value if the tax doesn't make sense
+		if (getConfig().getDouble("xp_tax") > XpContainer.MAX_TAX) {
+			XpContainer.setXpTax((getConfig().getDefaults().getDouble("xp_tax")/100.0));
+			log(Level.WARNING, "xp_tax exceeds possible limits! Please modify your config file.");
+			logInfo("Setting xp_tax to " + getConfig().getDefaults().getDouble("xp_tax") + "%");
+		} else {
+			XpContainer.setXpTax((getConfig().getDouble("xp_tax")/100.0));
+		}
 
 		// Loading custom texts
 		msgSection = getConfig().getConfigurationSection("Messages");

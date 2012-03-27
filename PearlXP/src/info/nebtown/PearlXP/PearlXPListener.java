@@ -1,5 +1,12 @@
 /**
+ * Small plugin to enable the storage of experience points in an item.
+ * 
  * Rewrite of the original PearlXP created by Nebual of nebtown.info in March 2012.
+ * 
+ * rewrite by: Marex, Zonta.
+ * 
+ * contact us at : plugins@x-dns.org
+ * 
  * Copyright (C) 2012 belongs to their respective owners
  * 
  * This program is free software: you can redistribute it and/or modify
@@ -15,6 +22,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 package info.nebtown.PearlXP;
 
 import info.nebtown.PearlXP.PearlXP.MsgKeys;
@@ -69,6 +77,7 @@ public class PearlXPListener implements Listener {
 		Action action = event.getAction();
 
 		int xp = 0;
+		double xpTaxed = 0;
 
 		Player player = event.getPlayer();
 		PlayerInventory inventory = player.getInventory();
@@ -91,20 +100,29 @@ public class PearlXPListener implements Listener {
 						&& (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK)) {
 					// Store some XP in the item
 
-					if (player.getTotalExperience() > XpContainer.getmaxExp()) {
+					if (player.getTotalExperience() > XpContainer.getmaxExp() + XpContainer.getmaxExp() * XpContainer.getXpTax()) {
+
 						xp = XpContainer.getmaxExp();
+						xpTaxed = xp * XpContainer.getXpTax();
+						player.sendMessage("TRUE");
 					} else {
+						
 						xp = player.getTotalExperience();
+						xpTaxed = xp * XpContainer.getXpTax();
+						xp = (int) (xp - xpTaxed);
+						player.sendMessage("FALSE");
 					}
 
 					try {
 
 						gem = storeXp(xp, gem, inventory);
-						removePlayerXp(xp, player);
+						removePlayerXp((int) (xp + xpTaxed), player);
 
 						// Friendly message !
 						sendInfo(imbueXpMsg, player, gem);
-
+						player.sendMessage("tax : " + xpTaxed);
+						player.sendMessage("tax value : " + XpContainer.getXpTax());
+						
 						// Visual and sound effects
 						player.getWorld().playEffect(player.getEyeLocation(), Effect.ENDER_SIGNAL, 0);
 						player.playEffect(player.getEyeLocation(), Effect.EXTINGUISH, 0);
@@ -404,7 +422,6 @@ public class PearlXPListener implements Listener {
 					newGem.setAmount(1);
 
 					inv.setItem(slot, newGem);
-					System.out.println("Only create one " + item.getAmount());
 
 				} else {
 					// The item is in a stack and cannot be unstack
@@ -416,7 +433,6 @@ public class PearlXPListener implements Listener {
 			if (item.getAmount() == 1) {
 				inv.setItemInHand(null);
 			} else {
-				System.out.println("deleting " + item.getAmount());
 				item.setAmount(item.getAmount() - 1);
 
 			}

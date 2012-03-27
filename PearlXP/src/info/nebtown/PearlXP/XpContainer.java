@@ -1,5 +1,12 @@
 /**
+ * Small plugin to enable the storage of experience points in an item.
+ * 
  * Rewrite of the original PearlXP created by Nebual of nebtown.info in March 2012.
+ * 
+ * rewrite by: Marex, Zonta.
+ * 
+ * contact us at : plugins@x-dns.org
+ * 
  * Copyright (C) 2012 belongs to their respective owners
  * 
  * This program is free software: you can redistribute it and/or modify
@@ -15,6 +22,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 package info.nebtown.PearlXP;
 
 import org.bukkit.enchantments.Enchantment;
@@ -26,6 +34,7 @@ public class XpContainer extends ItemStack {
 	 * Maximum storage capacity of a item
 	 */
 	public static int MAX_STORAGE = 32767; // Max of a short
+	public static double MAX_TAX = 99; // Maximum tax
 
 	/**
 	 * Enchantement used to store experience points
@@ -36,6 +45,7 @@ public class XpContainer extends ItemStack {
 	private static int imbuedItemId;
 	private static int maxExp;
 	private static String itemName;
+	private static double xpTax;
 
 	private ItemStack itemStack;
 
@@ -182,6 +192,14 @@ public class XpContainer extends ItemStack {
 
 
 	/**
+	 * @return the xpTax
+	 */
+	public static double getXpTax() {
+		return xpTax;
+	}
+
+
+	/**
 	 * @param imbuedItemId the imbuedItemId to set
 	 */
 	protected static void setImbuedItemId(int imbuedItemId) {
@@ -218,6 +236,14 @@ public class XpContainer extends ItemStack {
 	 */
 	protected static void setItemName(String itemName) {
 		XpContainer.itemName = itemName;
+	}
+
+
+	/**
+	 * @param xpTax the xpTax to set
+	 */
+	public static void setXpTax(double xpTax) {
+		XpContainer.xpTax = xpTax;
 	}
 
 

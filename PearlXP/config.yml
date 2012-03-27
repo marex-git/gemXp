@@ -11,6 +11,8 @@
 #
 # imbued_appearance: The appearance of the soul gem when it contains XP (item ID)
 #
+# xp_tax: The tax ration in % that the player will lost on imbue
+#
 # Messages: Section where you can customize the text messages sent to the player,
 #			comment lines to disable the related messages. (comments are lines 
 #           beginning with '#' like this one)
@@ -28,6 +30,7 @@ max_level: 225
 item_id: 368
 item_name: soul gem
 imbued_appearance: 381
+xp_tax: 10
 
 Messages:
   inventory_full: Your inventory is full!
