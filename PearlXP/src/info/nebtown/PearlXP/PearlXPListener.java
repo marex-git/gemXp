@@ -104,13 +104,11 @@ public class PearlXPListener implements Listener {
 
 						xp = XpContainer.getmaxExp();
 						xpTaxed = xp * XpContainer.getXpTax();
-						player.sendMessage("TRUE");
 					} else {
 						
 						xp = player.getTotalExperience();
 						xpTaxed = xp * XpContainer.getXpTax();
 						xp = (int) (xp - xpTaxed);
-						player.sendMessage("FALSE");
 					}
 
 					try {
@@ -120,8 +118,6 @@ public class PearlXPListener implements Listener {
 
 						// Friendly message !
 						sendInfo(imbueXpMsg, player, gem);
-						player.sendMessage("tax : " + xpTaxed);
-						player.sendMessage("tax value : " + XpContainer.getXpTax());
 						
 						// Visual and sound effects
 						player.getWorld().playEffect(player.getEyeLocation(), Effect.ENDER_SIGNAL, 0);
@@ -184,15 +180,12 @@ public class PearlXPListener implements Listener {
 		int startSlot;
 		int endSlot;
 
-		System.out.println(event.getRawSlot() + " | " + event.getSlot());
-
 		// we ignore throwing items and non soul gems items...
 		if(XpContainer.isAnXpContainer(event.getCurrentItem()) 
 				&& event.getSlotType() != InventoryType.SlotType.OUTSIDE) {
 
 			inv = event.getInventory();
 			clickedGem = new XpContainer(event.getCurrentItem());
-			System.out.println("Type: " + event.getInventory().getType());
 
 			if (event.isShiftClick()) {
 				// Transfert stacks to the other "section" of an inventory
@@ -246,7 +239,7 @@ public class PearlXPListener implements Listener {
 				}
 
 				if (cursorGem.equals(clickedGem)) {
-					transfertGems(cursorGem, clickedGem, inv, event, transfertQty, false);
+					transfertGems(cursorGem, clickedGem, inv, event, transfertQty, true);
 
 				} else {
 					// Switch items
@@ -546,11 +539,9 @@ public class PearlXPListener implements Listener {
 			similarGem = findSimilarStack(gemToStack, inv, start, end);
 
 			if (similarGem != null) {
-				System.out.println("Stack stuff!");
-				finish = transfertGems(gemToStack, similarGem, inv, event, true);
+				finish = transfertGems(gemToStack, similarGem, inv, event, false);
 
 			} else {
-				System.out.println("First empty stuff! not in the quick");
 				if (emptySlot >= 0) {
 					inv.setItem(emptySlot, gemToStack);
 					event.setCurrentItem(null); // remove the transfered gem
