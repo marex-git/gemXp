@@ -95,7 +95,7 @@ public class PearlXPListener implements Listener {
 					// the item is empty and the player clicked "on is feet"
 					sendInfo(infoXpEmptyMsg, INFO_COLOR, player, gem);
 
-				} else if (player.getTotalExperience() > 0 
+				} else if (player.getTotalExperience() > 0
 						&& (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK)) {
 					// Store some XP in the item
 
@@ -107,7 +107,7 @@ public class PearlXPListener implements Listener {
 
 						xp = player.getTotalExperience();
 						xpTaxed = xp * XpContainer.getXpTax();
-						xp = (int) (xp - xpTaxed);
+						xp = xp - (int)(xpTaxed);
 					}
 
 					gem = storeXp(xp, gem, player);
