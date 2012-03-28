@@ -44,7 +44,6 @@ public class PearlXP extends org.bukkit.plugin.java.JavaPlugin {
 
 	public enum MsgKeys { 
 
-		INVENTORY_FULL("inventory_full"),
 		INFO_XP("info_xp_content"),
 		INFO_XP_EMPTY("info_xp_empty"),
 		IMBUE_XP("imbue_xp"),
