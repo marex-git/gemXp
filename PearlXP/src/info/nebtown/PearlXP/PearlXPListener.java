@@ -38,6 +38,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.Inventory;
@@ -79,7 +80,6 @@ public class PearlXPListener implements Listener {
 		double xpTaxed = 0;
 
 		Player player = event.getPlayer();
-		PlayerInventory inventory = player.getInventory();
 
 		if (event.hasItem() && XpContainer.isAnXpContainer(event.getItem())) {
 
@@ -110,7 +110,7 @@ public class PearlXPListener implements Listener {
 						xp = (int) (xp - xpTaxed);
 					}
 
-					gem = storeXp(xp, gem, inventory);
+					gem = storeXp(xp, gem, player);
 					removePlayerXp((int) (xp + xpTaxed), player);
 
 					// Friendly message !
@@ -143,7 +143,7 @@ public class PearlXPListener implements Listener {
 					xp = gem.getStoredXp();
 
 					// Remove all Stored XP
-					storeXp(0, gem, inventory);
+					storeXp(0, gem, player);
 
 					// give the player the XP
 					player.giveExp(xp);
@@ -395,9 +395,10 @@ public class PearlXPListener implements Listener {
 	 * @param xp experience points
 	 * @param inv inventory of the player
 	 */
-	private XpContainer storeXp(int xp, XpContainer item,  PlayerInventory inv) {
+	private XpContainer storeXp(int xp, XpContainer item,  Player player) {
 		XpContainer similarStack;
 		XpContainer newGem;
+		PlayerInventory inv = player.getInventory();
 		int slot = inv.firstEmpty();
 		Block lookingBlock;
 
@@ -429,7 +430,7 @@ public class PearlXPListener implements Listener {
 					// The item is in a stack and cannot be unstack
 					// We drop the item where the player is looking
 					lookingBlock = inv.getHolder().getLastTwoTargetBlocks(null, 2).get(0);
-					inv.getHolder().getWorld().dropItem(lookingBlock.getLocation(), newGem);
+					new PlayerDropItemEvent(player, player.getWorld().dropItem(lookingBlock.getLocation(), newGem));
 				}
 			}
 
