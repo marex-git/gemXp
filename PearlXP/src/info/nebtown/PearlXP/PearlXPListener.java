@@ -29,6 +29,7 @@ import info.nebtown.PearlXP.PearlXP.MsgKeys;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
+import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Result;
@@ -48,12 +49,10 @@ public class PearlXPListener implements Listener {
 
 	private static final ChatColor TEXT_COLOR = ChatColor.BLUE;
 	private static final ChatColor INFO_COLOR = ChatColor.AQUA;
-	private static final ChatColor ERR_COLOR = ChatColor.DARK_RED;
 
 	private static final int QUICKBAR_SLOT_NB = 9;
 
 	// messages
-	private String invFullMsg;
 	private String infoXpMsg;
 	private String infoXpEmptyMsg;
 	private String imbueXpMsg;
@@ -62,7 +61,6 @@ public class PearlXPListener implements Listener {
 	public PearlXPListener(PearlXP plugin) {
 		plugin.getServer().getPluginManager().registerEvents(this, plugin);
 
-		this.invFullMsg = plugin.getMessage(MsgKeys.INVENTORY_FULL);
 		this.infoXpMsg = plugin.getMessage(MsgKeys.INFO_XP);
 		this.infoXpEmptyMsg = plugin.getMessage(MsgKeys.INFO_XP_EMPTY);
 		this.imbueXpMsg = plugin.getMessage(MsgKeys.IMBUE_XP);
@@ -105,26 +103,21 @@ public class PearlXPListener implements Listener {
 						xp = XpContainer.getmaxExp();
 						xpTaxed = xp * XpContainer.getXpTax();
 					} else {
-						
+
 						xp = player.getTotalExperience();
 						xpTaxed = xp * XpContainer.getXpTax();
 						xp = (int) (xp - xpTaxed);
 					}
 
-					try {
+					gem = storeXp(xp, gem, inventory);
+					removePlayerXp((int) (xp + xpTaxed), player);
 
-						gem = storeXp(xp, gem, inventory);
-						removePlayerXp((int) (xp + xpTaxed), player);
+					// Friendly message !
+					sendInfo(imbueXpMsg, player, gem);
 
-						// Friendly message !
-						sendInfo(imbueXpMsg, player, gem);
-						
-						// Visual and sound effects
-						player.getWorld().playEffect(player.getEyeLocation(), Effect.ENDER_SIGNAL, 0);
-						player.playEffect(player.getEyeLocation(), Effect.EXTINGUISH, 0);
-					} catch (InventoryFullException e) {
-						sendError(invFullMsg, player, gem);
-					}
+					// Visual and sound effects
+					player.getWorld().playEffect(player.getEyeLocation(), Effect.ENDER_SIGNAL, 0);
+					player.playEffect(player.getEyeLocation(), Effect.EXTINGUISH, 0);
 				}
 
 			} else if (gem.canContainXp()) {
@@ -146,24 +139,19 @@ public class PearlXPListener implements Listener {
 						&& (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK)) {
 					// Restore XP to the player
 
-					try {
-						xp = gem.getStoredXp();
+					xp = gem.getStoredXp();
 
-						// Remove all Stored XP
-						storeXp(0, gem, inventory);
+					// Remove all Stored XP
+					storeXp(0, gem, inventory);
 
-						// give the player the XP
-						player.giveExp(xp);
-						sendInfo(restoreXpMsg, player, gem);
+					// give the player the XP
+					player.giveExp(xp);
+					sendInfo(restoreXpMsg, player, gem);
 
-						// Special effects!
-						player.playEffect(player.getEyeLocation(), Effect.GHAST_SHOOT, 0);
-						player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 2, 1));
-						player.getWorld().playEffect(player.getEyeLocation(), Effect.SMOKE, BlockFace.SELF);
-
-					} catch (InventoryFullException e) {
-						sendError(invFullMsg, player, gem);
-					}
+					// Special effects!
+					player.playEffect(player.getEyeLocation(), Effect.GHAST_SHOOT, 0);
+					player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 2, 1));
+					player.getWorld().playEffect(player.getEyeLocation(), Effect.SMOKE, BlockFace.SELF);
 				}
 			}
 
@@ -286,17 +274,6 @@ public class PearlXPListener implements Listener {
 	}
 
 
-
-	/**
-	 * Send an error message to the player
-	 * @param msg message
-	 * @param p player
-	 */
-	private void sendError(String msg, Player p, XpContainer i ) {
-		sendInfo(msg, ERR_COLOR, p, i);
-		p.playEffect(p.getLocation(), Effect.ZOMBIE_CHEW_IRON_DOOR, 0);
-	}
-
 	/**
 	 * Send the player an information message with the default text color.
 	 * @param s message
@@ -391,6 +368,7 @@ public class PearlXPListener implements Listener {
 		XpContainer similarStack;
 		XpContainer newGem;
 		int slot = inv.firstEmpty();
+		Block lookingBlock;
 
 		newGem = new XpContainer(item.clone());
 		newGem.setStoredXp(xp);
@@ -398,8 +376,7 @@ public class PearlXPListener implements Listener {
 
 		if (item.getAmount() == 1 && similarStack == null && slot < 0) {
 
-			item.setStoredXp(xp);
-			newGem = item;
+			inv.setItemInHand(newGem);
 
 		} else { // We can unstack stuff!
 
@@ -410,15 +387,18 @@ public class PearlXPListener implements Listener {
 
 			} else { // no similar stack
 
+				// Only create one item...
+				newGem.setAmount(1);
+
 				if (slot >= 0) {
-					// Only create one item...
-					newGem.setAmount(1);
 
 					inv.setItem(slot, newGem);
 
 				} else {
 					// The item is in a stack and cannot be unstack
-					throw new InventoryFullException();
+					// We drop the item where the player is looking
+					lookingBlock = inv.getHolder().getLastTwoTargetBlocks(null, 2).get(0);
+					inv.getHolder().getWorld().dropItem(lookingBlock.getLocation(), newGem);
 				}
 			}
 
@@ -435,7 +415,7 @@ public class PearlXPListener implements Listener {
 
 	}
 
-	
+
 	/**
 	 * Transfert all possible gems in the gemToTransfert stack into another stack of gems.
 	 * @param gemToTransfert
@@ -449,7 +429,7 @@ public class PearlXPListener implements Listener {
 		return transfertGems(gemToTransfert, gemStack, inv, event, gemToTransfert.getAmount(), onCursor);
 	}
 
-	
+
 	/**
 	 * Transfert all possible gems in the gemToTransfert stack into another stack of gems.
 	 * @param gemToTransfert
