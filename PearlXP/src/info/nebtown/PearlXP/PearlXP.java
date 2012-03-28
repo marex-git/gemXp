@@ -34,12 +34,12 @@ import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 
 public class PearlXP extends org.bukkit.plugin.java.JavaPlugin {
-	
+
 	private static final Logger LOGGER = Logger.getLogger("Minecraft");
 	private static final String LOGGER_PREFIX = "[GemXP]";
 
 	/****** Configuration options ******/
-	
+
 	private List<String> messages;
 
 	public enum MsgKeys { 
@@ -92,7 +92,7 @@ public class PearlXP extends org.bukkit.plugin.java.JavaPlugin {
 			log(Level.WARNING, "maxLevel exceeds possible limits! Please modify your config file.");
 			logInfo("Setting maxLevel to " + XpContainer.MAX_STORAGE);
 		}
-		
+
 		XpContainer.setItemId(getConfig().getInt("item_id"));
 
 		// take the default item name if no config exists
@@ -101,7 +101,9 @@ public class PearlXP extends org.bukkit.plugin.java.JavaPlugin {
 
 		// no change of appearance if this config doesn't exists
 		XpContainer.setImbuedItemId(getConfig().getInt("imbued_appearance", XpContainer.getItemId()));
-		
+
+		XpContainer.setMaxStackSize(getConfig().getInt("max_gem_stack_size"));
+
 		// set the default value if the tax doesn't make sense
 		if (getConfig().getDouble("xp_tax") > XpContainer.MAX_TAX) {
 			XpContainer.setXpTax((getConfig().getDefaults().getDouble("xp_tax")/100.0));
@@ -130,7 +132,7 @@ public class PearlXP extends org.bukkit.plugin.java.JavaPlugin {
 	public void logInfo(String msg) {
 		log(Level.INFO, msg);
 	}
-	
+
 	/**
 	 * Log information with given level with the plugin prefix
 	 * @param level

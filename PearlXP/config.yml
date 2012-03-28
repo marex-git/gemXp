@@ -11,6 +11,8 @@
 #
 # imbued_appearance: The appearance of the soul gem when it contains XP (item ID)
 #
+# max_gem_stack_size: The maximum number of gem in a stack
+#
 # xp_tax: The tax ration in % that the player will lost on imbue
 #
 # Messages: Section where you can customize the text messages sent to the player,
@@ -30,6 +32,7 @@ max_level: 225
 item_id: 368
 item_name: soul gem
 imbued_appearance: 381
+max_gem_stack_size: 16
 xp_tax: 10
 
 Messages:

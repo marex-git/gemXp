@@ -46,6 +46,7 @@ public class XpContainer extends ItemStack {
 	private static int maxExp;
 	private static String itemName;
 	private static double xpTax;
+	private static int stackSize;
 
 	private ItemStack itemStack;
 
@@ -63,7 +64,7 @@ public class XpContainer extends ItemStack {
 	public static boolean isAnXpContainer(ItemStack stack) {
 		int itemId = 0;
 		boolean container = false;
-		
+
 		if (stack != null) {
 			itemId = stack.getTypeId();
 			container = itemId == getImbuedItemId() || itemId == getItemId();
@@ -200,6 +201,15 @@ public class XpContainer extends ItemStack {
 
 
 	/**
+	 * @return the stackSize
+	 */
+	@Override
+	public int getMaxStackSize() {
+		return stackSize;
+	}
+
+
+	/**
 	 * @param imbuedItemId the imbuedItemId to set
 	 */
 	protected static void setImbuedItemId(int imbuedItemId) {
@@ -247,26 +257,34 @@ public class XpContainer extends ItemStack {
 	}
 
 
+	/**
+	 * @param maxStackSize the maxStackSize to set
+	 */
+	protected static void setMaxStackSize(int maxStackSize) {
+		XpContainer.stackSize = maxStackSize;
+	}
+
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
 	public boolean equals(Object obj) {
 		boolean result = false;
-		
+
 		if (this == obj)
 			return true;
 		if (getClass() != obj.getClass())
 			return false;
-		
+
 		XpContainer other = (XpContainer) obj;
-		
+
 		if (other.canContainXp() == this.canContainXp() 
 				&& other.canStoreXp() == this.canStoreXp()
 				&& other.getStoredXp() == this.getStoredXp()) {
 			result = true;
 		}
-		
+
 		return result;
 	}
 
