@@ -36,7 +36,7 @@ import org.bukkit.configuration.ConfigurationSection;
 public class PearlXP extends org.bukkit.plugin.java.JavaPlugin {
 	
 	private static final Logger LOGGER = Logger.getLogger("Minecraft");
-	private static final String LOGGER_PREFIX = "[PearlXP]";
+	private static final String LOGGER_PREFIX = "[GemXP]";
 
 	/****** Configuration options ******/
 	
