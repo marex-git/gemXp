@@ -242,7 +242,7 @@ public class XpContainer extends ItemStack {
 	/**
 	 * @param xpTax the xpTax to set
 	 */
-	public static void setXpTax(double xpTax) {
+	protected static void setXpTax(double xpTax) {
 		XpContainer.xpTax = xpTax;
 	}
 
