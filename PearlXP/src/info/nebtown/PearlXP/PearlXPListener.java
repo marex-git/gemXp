@@ -39,6 +39,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -239,6 +240,36 @@ public class PearlXPListener implements Listener {
 		}
 
 	}
+
+	@EventHandler
+	public void onGemPickUp(PlayerPickupItemEvent event) {
+		ItemStack pickUpItem = event.getItem().getItemStack();
+		Inventory inv;
+		XpContainer pickUpGem;
+		XpContainer similarGem;
+
+		if (XpContainer.isAnXpContainer(pickUpItem)) {
+			event.setCancelled(true);
+			pickUpGem = new XpContainer(pickUpItem);
+			inv = event.getPlayer().getInventory();
+
+			// find a stack to add on top or puts it in an empty space,
+			// otherwise let it on the ground
+			similarGem = findSimilarStack(pickUpGem, inv);
+			if (similarGem != null) {
+
+				if (pickUpGem.getAmount() == 1) {
+					similarGem.setAmount(similarGem.getAmount() + 1);
+					event.getItem().remove();
+				}
+
+			} else if (inv.firstEmpty() >= 0) {
+				inv.setItem(inv.firstEmpty(), pickUpItem);
+				event.getItem().remove();
+			}
+		}
+	}
+
 
 	/**
 	 * Format the message to add variables values
