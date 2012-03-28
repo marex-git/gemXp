@@ -374,7 +374,7 @@ public class PearlXPListener implements Listener {
 		newGem.setStoredXp(xp);
 		similarStack = findSimilarStack(newGem, inv);
 
-		if (item.getAmount() == 1 && similarStack == null && slot < 0) {
+		if (item.getAmount() == 1 && similarStack == null) {
 
 			inv.setItemInHand(newGem);
 
