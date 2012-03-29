@@ -23,9 +23,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package info.nebtown.PearlXP;
+package info.nebtown.GemXp;
 
-import info.nebtown.PearlXP.PearlXP.MsgKeys;
+import info.nebtown.GemXp.GemXp.MsgKeys;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
@@ -47,7 +47,7 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-public class PearlXPListener implements Listener {
+public class GemXpListener implements Listener {
 
 	private static final ChatColor TEXT_COLOR = ChatColor.BLUE;
 	private static final ChatColor INFO_COLOR = ChatColor.AQUA;
@@ -60,7 +60,7 @@ public class PearlXPListener implements Listener {
 	private String imbueXpMsg;
 	private String restoreXpMsg;
 
-	public PearlXPListener(PearlXP plugin) {
+	public GemXpListener(GemXp plugin) {
 		plugin.getServer().getPluginManager().registerEvents(this, plugin);
 
 		this.infoXpMsg = plugin.getMessage(MsgKeys.INFO_XP);

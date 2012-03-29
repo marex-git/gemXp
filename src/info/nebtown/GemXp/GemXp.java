@@ -23,7 +23,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package info.nebtown.PearlXP;
+package info.nebtown.GemXp;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +33,7 @@ import java.util.logging.Logger;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 
-public class PearlXP extends org.bukkit.plugin.java.JavaPlugin {
+public class GemXp extends org.bukkit.plugin.java.JavaPlugin {
 
 	private static final Logger LOGGER = Logger.getLogger("Minecraft");
 	private static final String LOGGER_PREFIX = "[GemXP]";
@@ -63,7 +63,7 @@ public class PearlXP extends org.bukkit.plugin.java.JavaPlugin {
 	@Override
 	public void onEnable() {
 		loadConfig();
-		new PearlXPListener(this);
+		new GemXpListener(this);
 
 		logInfo("Plugin loading complete. Plugin enabled.");
 	}
