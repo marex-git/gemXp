@@ -31,6 +31,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Effect;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
@@ -46,6 +47,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.util.Vector;
 
 public class GemXpListener implements Listener {
 
@@ -59,6 +61,7 @@ public class GemXpListener implements Listener {
 	private String infoXpEmptyMsg;
 	private String imbueXpMsg;
 	private String restoreXpMsg;
+	private GemXp plugin;
 
 	public GemXpListener(GemXp plugin) {
 		plugin.getServer().getPluginManager().registerEvents(this, plugin);
@@ -68,6 +71,7 @@ public class GemXpListener implements Listener {
 		this.imbueXpMsg = plugin.getMessage(MsgKeys.IMBUE_XP);
 		this.restoreXpMsg = plugin.getMessage(MsgKeys.RESTORE_XP);
 
+		this.plugin = plugin;
 	}
 
 
@@ -400,7 +404,8 @@ public class GemXpListener implements Listener {
 		XpContainer newGem;
 		PlayerInventory inv = player.getInventory();
 		int slot = inv.firstEmpty();
-		Block lookingBlock;
+		Item droppedItem;
+		Vector lookingVector;
 
 		newGem = new XpContainer(item.clone());
 		newGem.setStoredXp(xp);
@@ -428,9 +433,13 @@ public class GemXpListener implements Listener {
 
 				} else {
 					// The item is in a stack and cannot be unstack
+					droppedItem = player.getWorld().dropItem(player.getEyeLocation().subtract(new Vector(0, 0.2, 0)), newGem);
+					plugin.getServer().getPluginManager().callEvent(new PlayerDropItemEvent(player, droppedItem));
+
 					// We drop the item where the player is looking
-					lookingBlock = inv.getHolder().getLastTwoTargetBlocks(null, 2).get(0);
-					new PlayerDropItemEvent(player, player.getWorld().dropItem(lookingBlock.getLocation(), newGem));
+					lookingVector = getLookingVector(player);
+					lookingVector.multiply(0.4);
+					droppedItem.setVelocity(lookingVector);
 				}
 			}
 
@@ -447,6 +456,20 @@ public class GemXpListener implements Listener {
 
 	}
 
+
+	/**
+	 * Return a normalized vector representing where a player is looking
+	 * @param player
+	 * @return looking normalized vector
+	 */
+	private Vector getLookingVector(Player player) {
+		Block lookingBlock = player.getTargetBlock(null, 25);
+		Vector v1 = new Vector(lookingBlock.getX() - player.getEyeLocation().getX(),
+				lookingBlock.getY() - player.getEyeLocation().getY(),
+				lookingBlock.getZ() - player.getEyeLocation().getZ());
+
+		return v1.normalize();
+	}
 
 	/**
 	 * Transfert all possible gems in the gemToTransfert stack into another stack of gems.
