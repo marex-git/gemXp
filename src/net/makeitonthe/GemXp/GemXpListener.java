@@ -23,9 +23,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package info.nebtown.GemXp;
+package net.makeitonthe.GemXp;
 
-import info.nebtown.GemXp.GemXp.MsgKeys;
+
+import net.makeitonthe.GemXp.GemXp.MsgKeys;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;

@@ -23,7 +23,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package info.nebtown.GemXp;
+package net.makeitonthe.GemXp;
 
 import java.util.ArrayList;
 import java.util.List;
