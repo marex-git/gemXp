@@ -34,7 +34,10 @@ public class XpContainer extends ItemStack {
 	 * Maximum storage capacity of a item
 	 */
 	public static int MAX_STORAGE = 32767; // Max of a short
-	public static double MAX_TAX = 99; // Maximum tax
+	/**
+	 * Maximum possible tax
+	 */
+	public static double MAX_TAX = 99;
 
 	/**
 	 * Enchantement used to store experience points
@@ -205,7 +208,15 @@ public class XpContainer extends ItemStack {
 	 */
 	@Override
 	public int getMaxStackSize() {
-		return stackSize;
+		int max;
+		if (canContainXp() && getStoredXp() > 0) {
+			//filled gems
+			max = stackSize;
+		} else {
+			//empty gems
+			max = getType().getMaxStackSize();
+		}
+		return max;
 	}
 
 
