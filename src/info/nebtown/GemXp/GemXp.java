@@ -46,7 +46,7 @@ public class GemXp extends org.bukkit.plugin.java.JavaPlugin {
 
 		INFO_XP("info_xp_content"),
 		INFO_XP_EMPTY("info_xp_empty"),
-		IMBUE_XP("imbue_xp"),
+		IMBUE_XP("filled_xp"),
 		RESTORE_XP("restore_xp");
 
 		private String key;
@@ -100,7 +100,7 @@ public class GemXp extends org.bukkit.plugin.java.JavaPlugin {
 		XpContainer.setItemName(getConfig().getString("item_name", itemName.toLowerCase()));
 
 		// no change of appearance if this config doesn't exists
-		XpContainer.setImbuedItemId(getConfig().getInt("imbued_appearance", XpContainer.getItemId()));
+		XpContainer.setImbuedItemId(getConfig().getInt("filled_appearance", XpContainer.getItemId()));
 
 		XpContainer.setMaxStackSize(getConfig().getInt("max_gem_stack_size"));
 

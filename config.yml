@@ -9,11 +9,11 @@
 #
 # item_name: The item name given when a player uses a soul gem
 #
-# imbued_appearance: The appearance of the soul gem when it contains XP (item ID)
+# filled_appearance: The appearance of the soul gem when it contains XP (item ID)
 #
-# max_gem_stack_size: The maximum number of gem in a stack
+# max_gem_stack_size: The maximum number of gem in a stack when they are filled
 #
-# xp_tax: The tax ration in % that the player will lost on imbue
+# xp_tax: The tax ration in % that the player will lost when filling a gem
 #
 # Messages: Section where you can customize the text messages sent to the player,
 #			comment lines to disable the related messages. (comments are lines 
@@ -31,12 +31,12 @@ configversion: 3
 max_level: 225
 item_id: 368
 item_name: soul gem
-imbued_appearance: 381
+filled_appearance: 381
 max_gem_stack_size: 16
 xp_tax: 10
 
 Messages:
-  info_xp_content: This ${item_name} is imbued with ${xp} XP!
+  info_xp_content: This ${item_name} is filled with ${xp} XP!
   info_xp_empty: This ${item_name} is empty.
-# imbue_xp: Imbued this ${item_name} with ${xp} XP! You now have ${player_xp} XP!
+# filled_xp: Filled this ${item_name} with ${xp} XP! You now have ${player_xp} XP!
 # restore_xp: Restoring ${xp} XP! You now have ${player_xp} XP!
