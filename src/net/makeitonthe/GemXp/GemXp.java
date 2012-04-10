@@ -5,7 +5,7 @@
  * 
  * rewrite by: Marex, Zonta.
  * 
- * contact us at : plugins@x-dns.org
+ * contact us at : plugins@makeitonthe.net
  * 
  * Copyright (C) 2012 belongs to their respective owners
  * 
