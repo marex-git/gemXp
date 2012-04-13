@@ -1,5 +1,10 @@
-Release Candidate v0.1
-=====================
+Release v0.2
+=========
+
+  * Changed data storage to damage based;
+
+Release v0.1
+=========
 
   * Added transfer loss (experience points tax);
   * Implementation of stack handling to fixes some weird stacking behavior

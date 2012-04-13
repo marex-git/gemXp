@@ -12,6 +12,4 @@ This plugin is release under the [GNU General Public License version 3 (GPLv3)](
 ChangeLog of current version
 ----------
 
-* Added transfer loss (experience points tax);
-* Implementation of stack handling to fixes some weird stacking behavior when combining gem stacks together or "shift clicking" a stack in an inventory;
-* Now gems drops when the inventory is full instead of displaying an error message.
+* Changed data storage to damage based;
