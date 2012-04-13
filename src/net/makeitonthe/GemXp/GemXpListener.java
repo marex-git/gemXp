@@ -25,7 +25,6 @@
 
 package net.makeitonthe.GemXp;
 
-
 import net.makeitonthe.GemXp.GemXp.MsgKeys;
 
 import org.bukkit.ChatColor;
@@ -38,13 +37,8 @@ import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerPickupItemEvent;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -54,8 +48,6 @@ public class GemXpListener implements Listener {
 
 	private static final ChatColor TEXT_COLOR = ChatColor.BLUE;
 	private static final ChatColor INFO_COLOR = ChatColor.AQUA;
-
-	private static final int QUICKBAR_SLOT_NB = 9;
 
 	// messages
 	private String infoXpMsg;
@@ -71,7 +63,6 @@ public class GemXpListener implements Listener {
 		this.infoXpEmptyMsg = plugin.getMessage(MsgKeys.INFO_XP_EMPTY);
 		this.imbueXpMsg = plugin.getMessage(MsgKeys.IMBUE_XP);
 		this.restoreXpMsg = plugin.getMessage(MsgKeys.RESTORE_XP);
-
 		this.plugin = plugin;
 	}
 
@@ -79,12 +70,11 @@ public class GemXpListener implements Listener {
 	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		XpContainer gem;
+		Player player = event.getPlayer();
 		Action action = event.getAction();
-
 		int xp = 0;
 		double xpTaxed = 0;
 
-		Player player = event.getPlayer();
 
 		if (event.hasItem() && XpContainer.isAnXpContainer(event.getItem())) {
 
@@ -93,11 +83,10 @@ public class GemXpListener implements Listener {
 			if (gem.canStoreXp() && gem.getStoredXp() == 0) { // The item possess no XP
 
 				if (action == Action.RIGHT_CLICK_BLOCK) {
+					// the item is empty and the player clicked "on is feet"
 					// Show the amount of XP stored
 
 					event.setUseItemInHand(Result.DENY); //Don't throw the item!
-
-					// the item is empty and the player clicked "on is feet"
 					sendInfo(infoXpEmptyMsg, INFO_COLOR, player, gem);
 
 				} else if (player.getTotalExperience() > 0
@@ -147,10 +136,8 @@ public class GemXpListener implements Listener {
 
 					xp = gem.getStoredXp();
 
-					// Remove all Stored XP
+					// Remove all Stored XP and give it
 					storeXp(0, gem, player);
-
-					// give the player the XP
 					player.giveExp(xp);
 					sendInfo(restoreXpMsg, player, gem);
 
@@ -164,116 +151,6 @@ public class GemXpListener implements Listener {
 		}
 
 	} //onPlayerInteract
-
-	@EventHandler
-	public void onInventoryClicked(InventoryClickEvent event) {
-		XpContainer clickedGem;
-		XpContainer cursorGem;
-		Inventory inv;
-		int transfertQty;
-		int startSlot;
-		int endSlot;
-
-		// we ignore throwing items and non soul gems items...
-		if(XpContainer.isAnXpContainer(event.getCurrentItem()) 
-				&& event.getSlotType() != InventoryType.SlotType.OUTSIDE) {
-
-			inv = event.getInventory();
-			clickedGem = new XpContainer(event.getCurrentItem());
-
-			if (event.isShiftClick()) {
-				// Transfert stacks to the other "section" of an inventory
-				event.setCancelled(true);
-
-				if (inv.getType() == InventoryType.CHEST 
-						|| inv.getType() == InventoryType.DISPENSER) {
-					// In chest and dispenser we switch between player and entity inventory
-					// TODO Reverse iterate to match minecraft implementation better
-
-					if (event.getRawSlot() <= inv.getSize()) {
-						// The player clicked outside is own inventory
-						// We transfer in it...
-						inv = event.getWhoClicked().getInventory();
-					}
-
-					startSlot = 0;
-					endSlot = inv.getSize();
-
-					stackGems(clickedGem, event, inv, startSlot, endSlot);
-
-				} else {
-					// Use the player inventory
-					inv = event.getWhoClicked().getInventory();
-
-					// We alternate between the Quickbar and the main inventory block
-					if (event.getSlotType() == InventoryType.SlotType.QUICKBAR) {
-						startSlot = QUICKBAR_SLOT_NB;
-						endSlot = inv.getSize();
-					} else {
-						startSlot = 0;
-						endSlot = QUICKBAR_SLOT_NB;
-					}
-
-					// Stack all gems and transfer the rest in empty slots...
-					stackGems(clickedGem, event, inv, startSlot, endSlot);
-				}
-
-
-
-			} else if (XpContainer.isAnXpContainer(event.getCursor())) {
-				// the gem is click with another gem
-				event.setCancelled(true);
-				cursorGem = new XpContainer(event.getCursor());
-
-				//check if stacking is possible and stack, leftover are on cursor, if not switch the item
-				if (event.isLeftClick()) {
-					transfertQty = cursorGem.getAmount();
-				} else { // right clicked
-					transfertQty = 1;
-				}
-
-				if (cursorGem.equals(clickedGem)) {
-					transfertGems(cursorGem, clickedGem, inv, event, transfertQty, true);
-
-				} else {
-					// Switch items
-					event.setCursor(clickedGem);
-					event.setCurrentItem(cursorGem);
-				}
-			}
-
-		}
-
-	}
-
-	@EventHandler
-	public void onGemPickUp(PlayerPickupItemEvent event) {
-		ItemStack pickUpItem = event.getItem().getItemStack();
-		Inventory inv;
-		XpContainer pickUpGem;
-		XpContainer similarGem;
-
-		if (XpContainer.isAnXpContainer(pickUpItem)) {
-			event.setCancelled(true);
-			pickUpGem = new XpContainer(pickUpItem);
-			inv = event.getPlayer().getInventory();
-
-			// find a stack to add on top or puts it in an empty space,
-			// otherwise let it on the ground
-			similarGem = findSimilarStack(pickUpGem, inv);
-			if (similarGem != null) {
-
-				if (pickUpGem.getAmount() == 1) {
-					similarGem.setAmount(similarGem.getAmount() + 1);
-					event.getItem().remove();
-				}
-
-			} else if (inv.firstEmpty() >= 0) {
-				inv.setItem(inv.firstEmpty(), pickUpItem);
-				event.getItem().remove();
-			}
-		}
-	}
 
 
 	/**
@@ -290,6 +167,7 @@ public class GemXpListener implements Listener {
 
 		return formatMsg(msg, values);
 	}
+
 
 	/**
 	 * Format the message to add variables values
@@ -321,6 +199,7 @@ public class GemXpListener implements Listener {
 		}
 	}
 
+
 	/**
 	 * Send the player an information message with the specified text color.
 	 * @param s message
@@ -331,6 +210,7 @@ public class GemXpListener implements Listener {
 			p.sendMessage(c + formatMsg(msg, i.getStoredXp(), p.getTotalExperience()));
 		}
 	}
+
 
 	/**
 	 * Remove a number of XP from a given player
@@ -349,48 +229,6 @@ public class GemXpListener implements Listener {
 
 	}
 
-	/**
-	 * Find first not full stack with the same property. Return null if nothing
-	 * found.
-	 * 
-	 * @param stack {@link XpContainer} with the property looking for
-	 * @param inv inventory
-	 * @return ItemStack found
-	 */
-	private XpContainer findSimilarStack(XpContainer stack, Inventory inv) {
-		return findSimilarStack(stack, inv, 0, inv.getSize());
-	}
-
-
-	/**
-	 * Find the first not full stack of XpContainer with the same property starting at start
-	 * and ending at the index stop.
-	 * 
-	 * @param stack {@link XpContainer} with the property looking for
-	 * @param inv inventory
-	 * @param start the index to start the search
-	 * @param stop
-	 * @return the XpContainer found or null if nothing found
-	 */
-	private XpContainer findSimilarStack(XpContainer stack, Inventory inv, int start, int stop) {
-		ItemStack[] items = inv.getContents();
-		XpContainer gem = null;
-		boolean found = false;
-
-		if (stop > items.length) stop = items.length;
-
-		for (int i = start; i < stop && !found; i++) {
-			if (items[i] != null) {
-				gem = new XpContainer(items[i]);
-
-				if (gem.getAmount() < gem.getMaxStackSize() && gem.equals(stack)) {
-					found = true;
-				}
-			}
-		}
-
-		return found ? gem : null;
-	}
 
 	/**
 	 * Store the given amount of XP in the item. If other uncompleted stack
@@ -410,7 +248,7 @@ public class GemXpListener implements Listener {
 
 		newGem = new XpContainer(item.clone());
 		newGem.setStoredXp(xp);
-		similarStack = findSimilarStack(newGem, inv);
+		similarStack = newGem.findSimilarStack(inv);
 
 		if (item.getAmount() == 1 && similarStack == null) {
 
@@ -472,120 +310,4 @@ public class GemXpListener implements Listener {
 		return v1.normalize();
 	}
 
-	/**
-	 * Transfert all possible gems in the gemToTransfert stack into another stack of gems.
-	 * @param gemToTransfert
-	 * @param gemStack
-	 * @param inv inventory
-	 * @param event {@link InventoryClickEvent} that triggered the transfert
-	 * @param onCursor if the item to transfert is on the cursor
-	 * @return true if all the items where put into the gemStack
-	 */
-	private boolean transfertGems(XpContainer gemToTransfert, XpContainer gemStack, Inventory inv, InventoryClickEvent event, boolean onCursor) {
-		return transfertGems(gemToTransfert, gemStack, inv, event, gemToTransfert.getAmount(), onCursor);
-	}
-
-
-	/**
-	 * Transfert all possible gems in the gemToTransfert stack into another stack of gems.
-	 * @param gemToTransfert
-	 * @param gemStack
-	 * @param inv inventory
-	 * @param event {@link InventoryClickEvent} that triggered the transfert
-	 * @param quantity quantity to transfert
-	 * @param onCursor if the item to transfert is on the cursor
-	 * @return true if all the items where put into the gemStack
-	 */
-	private boolean transfertGems(XpContainer gemToTransfert, XpContainer gemStack, Inventory inv, InventoryClickEvent event, int quantity ,boolean onCursor) {
-		int transfertQty = 0;
-		boolean removedAll = false;
-
-
-		// Check the maximum possible to transfert
-		if (gemStack.getAmount() + quantity <= gemStack.getMaxStackSize()) {
-
-			transfertQty = quantity;
-			if (quantity == gemToTransfert.getAmount()) {
-				// We remove the stack completly
-				removedAll = true;
-
-				if (onCursor) {
-					event.setCursor(null);
-				} else {
-					event.setCurrentItem(null);
-				}
-			}
-
-		} else {
-			transfertQty = gemStack.getMaxStackSize() - gemStack.getAmount();
-		}
-
-		if (!removedAll) {
-			gemToTransfert.setAmount(gemToTransfert.getAmount() - transfertQty);
-		}
-
-		gemStack.setAmount(gemStack.getAmount() + transfertQty);
-
-		return removedAll;
-	}
-
-
-
-	/**
-	 * Find the first empty slot between the start and end index as start <= x < end
-	 * @param inv inventory
-	 * @param start index to start iterate
-	 * @param end index to end the iteration
-	 * @return the fist empty slot of the inventory
-	 */
-	private int firstEmptySlot(Inventory inv, int start, int end) {
-		ItemStack[] items = inv.getContents();
-		int slot = -1;
-		int i = start;
-
-		while(slot == -1 && i < end) {
-			if (items[i] == null) {
-				slot = i;
-			}
-
-			i++;
-		}
-
-		return slot;
-	}
-
-
-	/**
-	 * Stack gemToStack gems into all possible stack between the start and end 
-	 * index (start <= x < end); if no stack is available the stack is placed in
-	 * first empty space found.
-	 * 
-	 * @param gemToStack
-	 * @param event {@link InventoryClickEvent} that triggered this action
-	 * @param inv inventory
-	 * @param start start index 
-	 * @param end end index
-	 */
-	private void stackGems(XpContainer gemToStack, InventoryClickEvent event, Inventory inv, int start, int end) {
-		boolean finish = false;
-		XpContainer similarGem;
-		int emptySlot = firstEmptySlot(inv, start, end);
-
-		while (!finish) {
-			similarGem = findSimilarStack(gemToStack, inv, start, end);
-
-			if (similarGem != null) {
-				finish = transfertGems(gemToStack, similarGem, inv, event, false);
-
-			} else {
-				if (emptySlot >= 0) {
-					inv.setItem(emptySlot, gemToStack);
-					event.setCurrentItem(null); // remove the transfered gem
-				}
-
-				finish = true;
-			}
-		}
-	}
-
-} //class
+}

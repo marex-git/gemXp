@@ -64,6 +64,8 @@ public class GemXp extends org.bukkit.plugin.java.JavaPlugin {
 	public void onEnable() {
 		loadConfig();
 		new GemXpListener(this);
+		new GemPickupListener(this);
+		new InventoryListener(this);
 
 		logInfo("Plugin loading complete. Plugin enabled.");
 	}
