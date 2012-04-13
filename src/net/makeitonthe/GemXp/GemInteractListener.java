@@ -44,7 +44,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
-public class GemXpListener implements Listener {
+public class GemInteractListener implements Listener {
 
 	private static final ChatColor TEXT_COLOR = ChatColor.BLUE;
 	private static final ChatColor INFO_COLOR = ChatColor.AQUA;
@@ -56,7 +56,7 @@ public class GemXpListener implements Listener {
 	private String restoreXpMsg;
 	private GemXp plugin;
 
-	public GemXpListener(GemXp plugin) {
+	public GemInteractListener(GemXp plugin) {
 		plugin.getServer().getPluginManager().registerEvents(this, plugin);
 
 		this.infoXpMsg = plugin.getMessage(MsgKeys.INFO_XP);
