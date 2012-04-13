@@ -127,12 +127,8 @@ public class XpContainer extends ItemStack {
 	 * @return xp experience points
 	 */
 	public int getStoredXp() {
-		int xp = 0;
 
-		if (containsEnchantment(enchantment))
-			xp = getEnchantmentLevel(enchantment);
-
-		return xp;
+		return getDurability();
 	}
 
 	/**
@@ -147,12 +143,12 @@ public class XpContainer extends ItemStack {
 		}
 
 		if (xp == 0) {
-			removeEnchantment(enchantment);
 			setTypeId(getItemId()); // Change appearance
 		} else {
-			addUnsafeEnchantment(enchantment, xp);
 			setTypeId(getImbuedItemId()); // Change appearance
 		}
+		
+		setDurability((short) xp);
 	}
 
 
