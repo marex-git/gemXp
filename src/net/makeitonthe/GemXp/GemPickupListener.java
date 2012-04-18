@@ -24,11 +24,15 @@
  */
 package net.makeitonthe.GemXp;
 
+import org.bukkit.Location;
+import org.bukkit.entity.Item;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.Vector;
 
 public class GemPickupListener implements Listener {
 
@@ -39,7 +43,8 @@ public class GemPickupListener implements Listener {
 
 	@EventHandler
 	public void onGemPickUp(PlayerPickupItemEvent event) {
-		ItemStack pickUpItem = event.getItem().getItemStack();
+		Item eventItem = event.getItem();
+		ItemStack pickUpItem = eventItem.getItemStack();
 		Inventory inv;
 		XpContainer pickUpGem;
 		XpContainer similarGem;
@@ -56,6 +61,7 @@ public class GemPickupListener implements Listener {
 
 				if (pickUpGem.getAmount() == 1) {
 					similarGem.setAmount(similarGem.getAmount() + 1);
+					pickupAnimation(eventItem, event.getPlayer());
 					event.getItem().remove();
 				}
 
@@ -64,6 +70,19 @@ public class GemPickupListener implements Listener {
 				event.getItem().remove();
 			}
 		}
+	}
+	
+	private void pickupAnimation(Item item, Player player) {
+		Location itemLoc = item.getLocation();
+		Location playerLoc = player.getEyeLocation();
+		Vector v;
+		
+		playerLoc.setY(playerLoc.getY() - 0.5);
+		v = new Vector(playerLoc.getX() - itemLoc.getX(), 
+				playerLoc.getY() - itemLoc.getY(),
+				playerLoc.getZ() - itemLoc.getZ());
+		
+		item.setVelocity(v);
 	}
 
 }
