@@ -127,8 +127,15 @@ public class XpContainer extends ItemStack {
 	 * @return xp experience points
 	 */
 	public int getStoredXp() {
+		int xp = 0;
+		
+		if (!containsEnchantment(enchantment)) {
+			xp = getDurability();
+		} else {
+			xp = getEnchantmentLevel(enchantment);
+		}
 
-		return getDurability();
+		return xp;
 	}
 
 	/**
