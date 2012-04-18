@@ -32,8 +32,9 @@ import java.util.logging.Logger;
 
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.plugin.java.JavaPlugin;
 
-public class GemXp extends org.bukkit.plugin.java.JavaPlugin {
+public class GemXp extends JavaPlugin {
 
 	private static final Logger LOGGER = Logger.getLogger("Minecraft");
 	private static final String LOGGER_PREFIX = "[GemXP]";
