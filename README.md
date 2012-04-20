@@ -13,3 +13,4 @@ ChangeLog of current version
 ----------
 
 * Changed data storage to damage based;
+* Added animation when picking up gems.
