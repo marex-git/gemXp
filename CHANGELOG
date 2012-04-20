@@ -1,7 +1,8 @@
 Release v0.2
 =========
 
-  * Changed data storage to damage based;
+  * Changed data storage to damage based (backward compatible for now);
+  * Added animation when picking up gems.
 
 Release v0.1
 =========
