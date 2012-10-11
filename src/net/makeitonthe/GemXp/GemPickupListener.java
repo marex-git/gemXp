@@ -59,9 +59,15 @@ public class GemPickupListener implements Listener {
 			similarGem = pickUpGem.findSimilarStack(inv);
 			if (similarGem != null) {
 
-				if (pickUpGem.getAmount() == 1) {
+				while (pickUpGem.getAmount() > 0 && similarGem != null) {
 					similarGem.setAmount(similarGem.getAmount() + 1);
+					pickUpGem.setAmount(pickUpGem.getAmount() - 1);
 					pickupAnimation(eventItem, event.getPlayer());
+
+					similarGem = pickUpGem.findSimilarStack(inv);
+				}
+
+				if (pickUpGem.getAmount() == 0) {
 					event.getItem().remove();
 				}
 
