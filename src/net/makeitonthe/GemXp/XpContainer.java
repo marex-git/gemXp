@@ -56,7 +56,10 @@ public class XpContainer extends ItemStack {
 	private static int itemId;
 	private static int imbuedItemId;
 	private static int maxExp;
+
 	private static String itemName;
+	private static String itemHint;
+	
 	private static double xpTax;
 	private static int stackSize;
 
@@ -159,7 +162,7 @@ public class XpContainer extends ItemStack {
 			setTypeId(getImbuedItemId()); // Change appearance
 			// set new hints
 			setDisplayName(DISPLAY_NAME_FORMAT + getItemName());
-			setNewLore(LORE_FORMAT + xp + "xp");
+			setNewLore(LORE_FORMAT + getItemHint() + " " + xp + "xp");
 		}
 		
 		setDurability((short) xp);
@@ -186,14 +189,6 @@ public class XpContainer extends ItemStack {
 	 */
 	public static int getmaxExp() {
 		return maxExp;
-	}
-
-
-	/**
-	 * @return the itemName of the containers
-	 */
-	public static String getItemName() {
-		return itemName;
 	}
 
 
@@ -227,6 +222,22 @@ public class XpContainer extends ItemStack {
 			max = getType().getMaxStackSize();
 		}
 		return max;
+	}
+
+
+	/**
+	 * @return the itemName of the containers
+	 */
+	protected static String getItemName() {
+		return itemName;
+	}
+
+
+	/**
+	 * @return the itemHint
+	 */
+	protected static String getItemHint() {
+		return itemHint;
 	}
 
 
@@ -269,7 +280,13 @@ public class XpContainer extends ItemStack {
 		XpContainer.itemName = itemName;
 	}
 
-
+	/**
+	 * @param itemHint the itemHint to set
+	 */
+	protected static void setItemHint(String itemHint) {
+		XpContainer.itemHint = itemHint;
+	}
+	
 	/**
 	 * @param xpTax the xpTax to set
 	 */

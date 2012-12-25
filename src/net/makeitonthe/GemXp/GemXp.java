@@ -39,14 +39,13 @@ public class GemXp extends JavaPlugin {
 	private static final Logger LOGGER = Logger.getLogger("Minecraft");
 	private static final String LOGGER_PREFIX = "[GemXP]";
 
-	/****** Configuration options ******/
 
+	/****** Configuration options ******/
+	private static final int CONFIG_VERSION = 4;
 	private List<String> messages;
 
 	public enum MsgKeys { 
 
-		INFO_XP("info_xp_content"),
-		INFO_XP_EMPTY("info_xp_empty"),
 		IMBUE_XP("filled_xp"),
 		RESTORE_XP("restore_xp");
 
@@ -83,7 +82,7 @@ public class GemXp extends JavaPlugin {
 		ConfigurationSection msgSection;
 		String itemName;
 
-		if (getConfig().getInt("configversion", 0) < 3) {
+		if (getConfig().getInt("configversion", 0) < CONFIG_VERSION) {
 			saveResource("config.yml", true);
 			logInfo("New config file created, you should check if your " +
 					"configurations are correct!");
@@ -101,6 +100,7 @@ public class GemXp extends JavaPlugin {
 		// take the default item name if no config exists
 		itemName = Material.getMaterial(XpContainer.getItemId()).toString();
 		XpContainer.setItemName(getConfig().getString("item_name", itemName.toLowerCase()));
+		XpContainer.setItemHint(getConfig().getString("hint", ""));
 
 		// no change of appearance if this config doesn't exists
 		XpContainer.setImbuedItemId(getConfig().getInt("filled_appearance", XpContainer.getItemId()));
@@ -153,7 +153,7 @@ public class GemXp extends JavaPlugin {
 		int i = 0;
 
 		for (MsgKeys k : MsgKeys.values()) {
-			if (key == k) {
+			if (key == k && i < messages.size()) {
 				msg = messages.get(i);
 			}
 			i += 1;

@@ -24,19 +24,18 @@
 #           Possible variables: ${item_name}, ${xp} and ${player_xp}.
 #
 
-configversion: 3
+configversion: 4
 
 ################################################################################
 
 max_level: 225
 item_id: 368
-item_name: soul gem
+item_name: Soul Gem
+hint: Filled with
 filled_appearance: 381
 max_gem_stack_size: 16
 xp_tax: 10
 
 Messages:
-  info_xp_content: This ${item_name} is filled with ${xp} XP!
-  info_xp_empty: This ${item_name} is empty.
 # filled_xp: Filled this ${item_name} with ${xp} XP! You now have ${player_xp} XP!
 # restore_xp: Restoring ${xp} XP! You now have ${player_xp} XP!
