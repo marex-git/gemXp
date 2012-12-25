@@ -134,7 +134,7 @@ public class GemInteractListener implements Listener {
 	 * @return the modified string
 	 */
 	private String formatMsg(String msg, int xp, int playerXp) {
-		String[] values = { XpContainer.getItemName(),
+		String[] values = { XpContainer.getItemName().toLowerCase(),
 				String.valueOf(xp),
 				String.valueOf(playerXp) };
 
