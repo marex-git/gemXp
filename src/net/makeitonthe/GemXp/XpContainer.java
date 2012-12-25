@@ -25,9 +25,12 @@
 
 package net.makeitonthe.GemXp;
 
-import org.bukkit.enchantments.Enchantment;
+import java.util.LinkedList;
+import java.util.List;
+
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 public class XpContainer extends ItemStack {
 
@@ -39,11 +42,16 @@ public class XpContainer extends ItemStack {
 	 * Maximum possible tax
 	 */
 	public static double MAX_TAX = 99;
-
+	
 	/**
-	 * Enchantement used to store experience points
+	 * Display name text format
 	 */
-	public static Enchantment enchantment = Enchantment.OXYGEN;
+	public static String DISPLAY_NAME_FORMAT = "§o§f"; // remove italic + white
+	
+	/**
+	 * Lore text format
+	 */
+	public static String LORE_FORMAT = "§r§7"; // reset format + gray
 
 	private static int itemId;
 	private static int imbuedItemId;
@@ -127,15 +135,8 @@ public class XpContainer extends ItemStack {
 	 * @return xp experience points
 	 */
 	public int getStoredXp() {
-		int xp = 0;
-		
-		if (!containsEnchantment(enchantment)) {
-			xp = getDurability();
-		} else {
-			xp = getEnchantmentLevel(enchantment);
-		}
 
-		return xp;
+		return getDurability();
 	}
 
 	/**
@@ -151,13 +152,18 @@ public class XpContainer extends ItemStack {
 
 		if (xp == 0) {
 			setTypeId(getItemId()); // Change appearance
+			// Reset hints
+			setDisplayName(null);
+			resetLore();
 		} else {
 			setTypeId(getImbuedItemId()); // Change appearance
+			// set new hints
+			setDisplayName(DISPLAY_NAME_FORMAT + getItemName());
+			setNewLore(LORE_FORMAT + xp + "xp");
 		}
 		
 		setDurability((short) xp);
 	}
-
 
 	/**
 	 * @return the itemId used as the empty containers
@@ -345,6 +351,46 @@ public class XpContainer extends ItemStack {
 		}
 
 		return found ? gem : null;
+	}
+	
+	/**
+	 * Set the display name to name
+	 * @param name
+	 */
+	private void setDisplayName(String name) {
+		ItemMeta newMeta = this.getItemMeta();
+		newMeta.setDisplayName(name);
+		
+		this.setItemMeta(newMeta);
+	}
+	
+	/**
+	 * Add a new lore to the lores list 
+	 * @param lore
+	 */
+	private void setNewLore(String lore) {
+		ItemMeta newMeta = this.getItemMeta();
+		List<String> lores = newMeta.getLore();
+		
+		if (lores != null) {
+			lores.add(lore);
+		} else {
+			lores = new LinkedList<String>();
+			lores.add(lore);
+		}
+		
+		newMeta.setLore(lores);
+		this.setItemMeta(newMeta);
+	}
+	
+	/**
+	 * Delete all lores
+	 */
+	private void resetLore() {
+		ItemMeta newMeta = this.getItemMeta();
+		
+		newMeta.setLore(null);
+		this.setItemMeta(newMeta);
 	}
 
 }

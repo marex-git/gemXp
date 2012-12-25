@@ -33,7 +33,6 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
@@ -47,11 +46,8 @@ import org.bukkit.util.Vector;
 public class GemInteractListener implements Listener {
 
 	private static final ChatColor TEXT_COLOR = ChatColor.BLUE;
-	private static final ChatColor INFO_COLOR = ChatColor.AQUA;
 
 	// messages
-	private String infoXpMsg;
-	private String infoXpEmptyMsg;
 	private String imbueXpMsg;
 	private String restoreXpMsg;
 	private GemXp plugin;
@@ -59,8 +55,6 @@ public class GemInteractListener implements Listener {
 	public GemInteractListener(GemXp plugin) {
 		plugin.getServer().getPluginManager().registerEvents(this, plugin);
 
-		this.infoXpMsg = plugin.getMessage(MsgKeys.INFO_XP);
-		this.infoXpEmptyMsg = plugin.getMessage(MsgKeys.INFO_XP_EMPTY);
 		this.imbueXpMsg = plugin.getMessage(MsgKeys.IMBUE_XP);
 		this.restoreXpMsg = plugin.getMessage(MsgKeys.RESTORE_XP);
 		this.plugin = plugin;
@@ -74,22 +68,14 @@ public class GemInteractListener implements Listener {
 		Action action = event.getAction();
 		int xp = 0;
 		double xpTaxed = 0;
-
-
+		
 		if (event.hasItem() && XpContainer.isAnXpContainer(event.getItem())) {
 
 			gem = new XpContainer(event.getItem());
 
 			if (gem.canStoreXp() && gem.getStoredXp() == 0) { // The item possess no XP
 
-				if (action == Action.RIGHT_CLICK_BLOCK) {
-					// the item is empty and the player clicked "on is feet"
-					// Show the amount of XP stored
-
-					event.setUseItemInHand(Result.DENY); //Don't throw the item!
-					sendInfo(infoXpEmptyMsg, INFO_COLOR, player, gem);
-
-				} else if (player.getTotalExperience() > 0
+				if (player.getTotalExperience() > 0
 						&& (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK)) {
 					// Store some XP in the item
 
@@ -116,21 +102,8 @@ public class GemInteractListener implements Listener {
 				}
 
 			} else if (gem.canContainXp()) {
-
-				if (gem.getStoredXp() > 0 && action == Action.RIGHT_CLICK_AIR 
-						|| action == Action.RIGHT_CLICK_BLOCK) {
-					// Show the stored XP...
-
-					event.setUseItemInHand(Result.DENY); //Don't throw the item!
-
-					if (gem.getStoredXp() == 0) {
-						sendInfo(infoXpEmptyMsg, INFO_COLOR, player, gem);
-					} else {
-						sendInfo(infoXpMsg, INFO_COLOR, player, gem);
-					}
-
-
-				} else if (gem.getStoredXp() > 0 
+				
+				if (gem.getStoredXp() > 0 
 						&& (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK)) {
 					// Restore XP to the player
 
