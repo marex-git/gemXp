@@ -12,5 +12,7 @@ This plugin is release under the [GNU General Public License version 3 (GPLv3)](
 ChangeLog of current version
 ----------
 
-* Changed data storage to damage based;
-* Added animation when picking up gems.
+  * Changed the way of checking the amount of experience points in a gem;
+  * Custom name for gems in inventory;
+  * Creative mode can create gems without experience points;
+  * WARNING: config file will be overwriten.
