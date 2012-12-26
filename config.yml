@@ -31,7 +31,7 @@ configversion: 4
 max_level: 225
 item_id: 368
 item_name: Soul Gem
-hint: Filled with
+hint: filled with
 filled_appearance: 381
 max_gem_stack_size: 16
 xp_tax: 10
