@@ -1,24 +1,24 @@
 /**
  * Small plugin to enable the storage of experience points in an item.
- * 
+ *
  * Rewrite of the original PearlXP created by Nebual of nebtown.info in March 2012.
- * 
+ *
  * rewrite by: Marex, Zonta.
- * 
+ *
  * contact us at : plugins@makeitonthe.net
- * 
+ *
  * Copyright (C) 2012 belongs to their respective owners
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -29,10 +29,12 @@ import net.makeitonthe.GemXp.GemXp.MsgKeys;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
+import org.bukkit.GameMode;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
@@ -64,54 +66,64 @@ public class GemInteractListener implements Listener {
 	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		XpContainer gem;
-		Player player = event.getPlayer();
+		Player player;
 		Action action = event.getAction();
 		int xp = 0;
 		double xpTaxed = 0;
-		
-		if (event.hasItem() && XpContainer.isAnXpContainer(event.getItem())) {
 
+		if (event.hasItem() && XpContainer.isAnXpContainer(event.getItem())) {
 			gem = new XpContainer(event.getItem());
 
-			if (gem.canStoreXp() && gem.getStoredXp() == 0) { // The item possess no XP
+			if (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) {
+				player = event.getPlayer();
 
-				if (player.getTotalExperience() > 0
-						&& (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK)) {
-					// Store some XP in the item
+				if (gem.canStoreXp() && gem.getStoredXp() == 0) {
+					// The item possess no XP
 
-					if (player.getTotalExperience() > XpContainer.getmaxExp() + XpContainer.getmaxExp() * XpContainer.getXpTax()) {
+					 if (player.getTotalExperience() > 0 || player.getGameMode() == GameMode.CREATIVE) {
+						// Store some XP in the item
 
-						xp = XpContainer.getmaxExp();
-						xpTaxed = xp * XpContainer.getXpTax();
-					} else {
+						if (player.getTotalExperience() > XpContainer.getmaxExp()
+								+ XpContainer.getmaxExp()
+								* XpContainer.getXpTax()) {
 
-						xp = player.getTotalExperience();
-						xpTaxed = xp * XpContainer.getXpTax();
-						xp = xp - (int)(xpTaxed);
+							xp = XpContainer.getmaxExp();
+							xpTaxed = xp * XpContainer.getXpTax();
+						} else {
+
+							xp = player.getTotalExperience();
+							xpTaxed = xp * XpContainer.getXpTax();
+							xp = xp - (int) (xpTaxed);
+						}
+
+						if (player.getGameMode() != GameMode.CREATIVE) {
+							gem = storeXp(xp, gem, player);
+							removePlayerXp((int) (xp + xpTaxed), player);
+						} else {
+							gem = storeXp(XpContainer.getmaxExp(), gem, player);
+						}
+
+						// Friendly message !
+						sendInfo(imbueXpMsg, player, gem);
+
+						// Visual and sound effects
+						player.getWorld().playEffect(player.getEyeLocation(), Effect.ENDER_SIGNAL, 0);
+						player.playEffect(player.getEyeLocation(), Effect.EXTINGUISH, 0);
 					}
 
-					gem = storeXp(xp, gem, player);
-					removePlayerXp((int) (xp + xpTaxed), player);
-
-					// Friendly message !
-					sendInfo(imbueXpMsg, player, gem);
-
-					// Visual and sound effects
-					player.getWorld().playEffect(player.getEyeLocation(), Effect.ENDER_SIGNAL, 0);
-					player.playEffect(player.getEyeLocation(), Effect.EXTINGUISH, 0);
-				}
-
-			} else if (gem.canContainXp()) {
-				
-				if (gem.getStoredXp() > 0 
-						&& (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK)) {
+				} else if (gem.canContainXp() && gem.getStoredXp() > 0) {
 					// Restore XP to the player
 
 					xp = gem.getStoredXp();
 
 					// Remove all Stored XP and give it
 					storeXp(0, gem, player);
-					player.giveExp(xp);
+
+					// Don't give xp in creative
+					if (player.getGameMode() != GameMode.CREATIVE) {
+						player.giveExp(xp);
+					}
+
 					sendInfo(restoreXpMsg, player, gem);
 
 					// Special effects!
@@ -119,11 +131,14 @@ public class GemInteractListener implements Listener {
 					player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 2, 1));
 					player.getWorld().playEffect(player.getEyeLocation(), Effect.SMOKE, BlockFace.SELF);
 				}
-			}
 
+			} else if ((action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK)
+					&& gem.canContainXp() && gem.getStoredXp() > 0) {
+				event.setUseItemInHand(Result.DENY); //Don't throw the item!
+			}
 		}
 
-	} //onPlayerInteract
+	} // onPlayerInteract
 
 
 	/**
@@ -134,6 +149,7 @@ public class GemInteractListener implements Listener {
 	 * @return the modified string
 	 */
 	private String formatMsg(String msg, int xp, int playerXp) {
+		if (msg == null) return null;
 		String[] values = { XpContainer.getItemName().toLowerCase(),
 				String.valueOf(xp),
 				String.valueOf(playerXp) };
@@ -206,7 +222,7 @@ public class GemInteractListener implements Listener {
 	/**
 	 * Store the given amount of XP in the item. If other uncompleted stack
 	 * exists with the correct XP the method stack them together.
-	 * 
+	 *
 	 * @param item ItemStack to store XP
 	 * @param xp experience points
 	 * @param inv inventory of the player
