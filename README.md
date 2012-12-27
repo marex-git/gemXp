@@ -15,4 +15,4 @@ ChangeLog of current version
   * Changed the way of checking the amount of experience points in a gem;
   * Custom name for gems in inventory;
   * Creative mode can create gems without experience points;
-  * WARNING: config file will be overwriten.
+  * WARNING: config file will be overwritten.
