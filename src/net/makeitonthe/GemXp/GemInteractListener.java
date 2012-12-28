@@ -96,11 +96,11 @@ public class GemInteractListener implements Listener {
 							xp = xp - (int) (xpTaxed);
 						}
 
-						if (player.getGameMode() != GameMode.CREATIVE) {
-							gem = storeXp(xp, gem, player);
-							removePlayerXp((int) (xp + xpTaxed), player);
+						if (player.getGameMode() == GameMode.CREATIVE) {
+							gem = storeAndStackXp(XpContainer.getmaxExp(), gem, player);
 						} else {
-							gem = storeXp(XpContainer.getmaxExp(), gem, player);
+							gem = storeAndStackXp(xp, gem, player);
+							removePlayerXp((int) (xp + xpTaxed), player);
 						}
 
 						// Friendly message !
@@ -117,7 +117,7 @@ public class GemInteractListener implements Listener {
 					xp = gem.getStoredXp();
 
 					// Remove all Stored XP and give it
-					storeXp(0, gem, player);
+					storeAndStackXp(0, gem, player);
 
 					// Don't give xp in creative
 					if (player.getGameMode() != GameMode.CREATIVE) {
@@ -227,7 +227,7 @@ public class GemInteractListener implements Listener {
 	 * @param xp experience points
 	 * @param inv inventory of the player
 	 */
-	private XpContainer storeXp(int xp, XpContainer item,  Player player) {
+	private XpContainer storeAndStackXp(int xp, XpContainer item,  Player player) {
 		XpContainer similarStack;
 		XpContainer newGem;
 		PlayerInventory inv = player.getInventory();
