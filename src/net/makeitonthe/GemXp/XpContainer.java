@@ -1,24 +1,24 @@
 /**
  * Small plugin to enable the storage of experience points in an item.
- * 
+ *
  * Rewrite of the original PearlXP created by Nebual of nebtown.info in March 2012.
- * 
+ *
  * rewrite by: Marex, Zonta.
- * 
+ *
  * contact us at : plugins@makeitonthe.net
- * 
+ *
  * Copyright (C) 2012 belongs to their respective owners
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -42,12 +42,12 @@ public class XpContainer extends ItemStack {
 	 * Maximum possible tax
 	 */
 	public static double MAX_TAX = 99;
-	
+
 	/**
 	 * Display name text format
 	 */
 	public static String DISPLAY_NAME_FORMAT = "§o§f"; // remove italic + white
-	
+
 	/**
 	 * Lore text format
 	 */
@@ -59,7 +59,7 @@ public class XpContainer extends ItemStack {
 
 	private static String itemName;
 	private static String itemHint;
-	
+
 	private static double xpTax;
 	private static int stackSize;
 
@@ -153,18 +153,14 @@ public class XpContainer extends ItemStack {
 			xp = getmaxExp();
 		}
 
+		// Change appearance
 		if (xp == 0) {
-			setTypeId(getItemId()); // Change appearance
-			// Reset hints
-			setDisplayName(null);
-			resetLore();
+			resetContainer();
 		} else {
-			setTypeId(getImbuedItemId()); // Change appearance
-			// set new hints
-			setDisplayName(DISPLAY_NAME_FORMAT + getItemName());
-			setNewLore(LORE_FORMAT + getItemHint() + " " + xp + "xp");
+			initContainer(xp);
 		}
-		
+
+		// Change the stored xp
 		setDurability((short) xp);
 	}
 
@@ -265,7 +261,7 @@ public class XpContainer extends ItemStack {
 		// check if maxLevel fits in a short (2^15 - 1)
 		if (maxExp > MAX_STORAGE) {
 			XpContainer.maxExp = MAX_STORAGE;
-		} else { 
+		} else {
 			XpContainer.maxExp = maxExp;
 			result = true;
 		}
@@ -286,7 +282,7 @@ public class XpContainer extends ItemStack {
 	protected static void setItemHint(String itemHint) {
 		XpContainer.itemHint = itemHint;
 	}
-	
+
 	/**
 	 * @param xpTax the xpTax to set
 	 */
@@ -317,7 +313,7 @@ public class XpContainer extends ItemStack {
 
 		XpContainer other = (XpContainer) obj;
 
-		if (other.canContainXp() == this.canContainXp() 
+		if (other.canContainXp() == this.canContainXp()
 				&& other.canStoreXp() == this.canStoreXp()
 				&& other.getStoredXp() == this.getStoredXp()) {
 			result = true;
@@ -330,7 +326,7 @@ public class XpContainer extends ItemStack {
 	/**
 	 * Find first not full stack with the same property. Return null if nothing
 	 * found.
-	 * 
+	 *
 	 * @param stack {@link XpContainer} with the property looking for
 	 * @param inv inventory
 	 * @return ItemStack found
@@ -343,7 +339,7 @@ public class XpContainer extends ItemStack {
 	/**
 	 * Find the first not full stack of XpContainer with the same property starting at start
 	 * and ending at the index stop.
-	 * 
+	 *
 	 * @param stack {@link XpContainer} with the property looking for
 	 * @param inv inventory
 	 * @param start the index to start the search
@@ -369,45 +365,48 @@ public class XpContainer extends ItemStack {
 
 		return found ? gem : null;
 	}
-	
+
 	/**
-	 * Set the display name to name
-	 * @param name
+	 * Prepare the container by changing is typeid, display name and adding a
+	 * new lore indicating the stored experience points
+	 *
+	 * @param xp experience points stored in the container
 	 */
-	private void setDisplayName(String name) {
-		ItemMeta newMeta = this.getItemMeta();
-		newMeta.setDisplayName(name);
-		
-		this.setItemMeta(newMeta);
-	}
-	
-	/**
-	 * Add a new lore to the lores list 
-	 * @param lore
-	 */
-	private void setNewLore(String lore) {
-		ItemMeta newMeta = this.getItemMeta();
-		List<String> lores = newMeta.getLore();
-		
+	private void initContainer(int xp) {
+		ItemMeta itemMeta = this.getItemMeta();
+		List<String> lores = itemMeta.getLore();
+		String lore = LORE_FORMAT + getItemHint() + " " + xp + "xp";
+
+		// Change appearance and display name
+		setTypeId(getImbuedItemId());
+		itemMeta.setDisplayName(DISPLAY_NAME_FORMAT + getItemName());
+
+		// Add description
 		if (lores != null) {
 			lores.add(lore);
 		} else {
+			// If the list does'nt exist we create it
 			lores = new LinkedList<String>();
 			lores.add(lore);
 		}
-		
-		newMeta.setLore(lores);
-		this.setItemMeta(newMeta);
+
+		this.setItemMeta(itemMeta);
 	}
-	
+
 	/**
-	 * Delete all lores
+	 * Reset the appearance of the container
 	 */
-	private void resetLore() {
-		ItemMeta newMeta = this.getItemMeta();
-		
-		newMeta.setLore(null);
-		this.setItemMeta(newMeta);
+	private void resetContainer() {
+		ItemMeta itemMeta = this.getItemMeta();
+
+		// Change appearance
+		setTypeId(getItemId());
+
+		// Reset hints
+		itemMeta.setDisplayName(null);
+		itemMeta.setLore(null);
+
+		this.setItemMeta(itemMeta);
 	}
 
 }
