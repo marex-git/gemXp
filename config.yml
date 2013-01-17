@@ -1,26 +1,29 @@
 # Default GemXp configuration file
 #
 # Possible configuration:
+#
 # max_level: The max number of experience points (XP) that can be stored in a 
-# 			 pearl. (225 = lvl 10) see minecraftwiki...
+# 			 pearl. (170 = lvl 10) see minecraftwiki...
 #
-# item_id: The itemId to use for the soul gem. Avoid things which can 
-# 		   legitimately be enchanted (weapons, armor)
+# item_id: The itemId to use for the soul gem.
 #
-# item_name: The item name given when a player uses a soul gem
+# item_name: The name displayed in the inventory and messages.
+#
+# hint: The description of the item just before the amount of experience points
+#		shown in the inventory tip. (Keep this short!)
 #
 # filled_appearance: The appearance of the soul gem when it contains XP (item ID)
 #
 # max_gem_stack_size: The maximum number of gem in a stack when they are filled
 #
-# xp_tax: The tax ration in % that the player will lost when filling a gem
+# xp_tax: The tax ratio in % that the player will lost when filling a gem
 #
-# Messages: Section where you can customize the text messages sent to the player,
-#			comment lines to disable the related messages. (comments are lines 
-#           beginning with '#' like this one)
+# Messages: Section where you can customize the text messages sent to the player.
+#			Commented lines disable the messages. (comments are lines beginning
+#			with '#' like this one)
 #
-#           Special syntax ${variable} allows you to display dynamique values like
-#           the amount of experience points a player now has (ie.: ${player_xp}).
+#           Special syntax ${variable} allows you to display dynamic values like
+#           the amount of experience points a player now have (ie.: ${player_xp}).
 #           Possible variables: ${item_name}, ${xp} and ${player_xp}.
 #
 
@@ -28,7 +31,7 @@ configversion: 4
 
 ################################################################################
 
-max_level: 225
+max_level: 170
 item_id: 368
 item_name: Soul Gem
 hint: filled with
