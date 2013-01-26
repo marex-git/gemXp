@@ -414,14 +414,14 @@ public class XpContainer extends ItemStack {
 	private void resetContainer() {
 		ItemMeta itemMeta = this.getItemMeta();
 
-		// Change appearance
-		setTypeId(getItemId());
-
 		// Reset hints
 		itemMeta.setDisplayName(null);
 		itemMeta.setLore(null);
 
 		this.setItemMeta(itemMeta);
+
+		// Change appearance
+		setTypeId(getItemId());
 	}
 
 }
