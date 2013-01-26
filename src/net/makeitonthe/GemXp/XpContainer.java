@@ -404,6 +404,7 @@ public class XpContainer extends ItemStack {
 			lores.add(lore);
 		}
 
+		itemMeta.setLore(lores);
 		this.setItemMeta(itemMeta);
 	}
 
