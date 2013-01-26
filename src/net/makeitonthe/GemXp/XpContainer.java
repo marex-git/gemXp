@@ -89,6 +89,20 @@ public class XpContainer extends ItemStack {
 	}
 
 	/**
+	 * Return true if the ItemStack contains experience points
+	 * @return true if it contain XP, false otherwise
+	 */
+	public static boolean isAFilledXpContainer(ItemStack stack) {
+		boolean container = false;
+
+		if (stack != null) {
+			container = (stack.getTypeId() == getImbuedItemId() && stack.getDurability() > 0);
+		}
+
+		return container;
+	}
+
+	/**
 	 * Return true if the ItemStack has the capability of containing experience points
 	 * @return true if it can contain XP, false otherwise
 	 */

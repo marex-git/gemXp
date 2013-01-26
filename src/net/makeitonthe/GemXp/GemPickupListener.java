@@ -1,24 +1,24 @@
 /**
  * Small plugin to enable the storage of experience points in an item.
- * 
+ *
  * Rewrite of the original PearlXP created by Nebual of nebtown.info in March 2012.
- * 
+ *
  * rewrite by: Marex, Zonta.
- * 
+ *
  * contact us at : plugins@makeitonthe.net
- * 
+ *
  * Copyright (C) 2012 belongs to their respective owners
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -49,7 +49,7 @@ public class GemPickupListener implements Listener {
 		XpContainer pickUpGem;
 		XpContainer similarGem;
 
-		if (XpContainer.isAnXpContainer(pickUpItem)) {
+		if (XpContainer.isAFilledXpContainer(pickUpItem)) {
 			event.setCancelled(true);
 			pickUpGem = new XpContainer(pickUpItem);
 			inv = event.getPlayer().getInventory();
@@ -77,17 +77,17 @@ public class GemPickupListener implements Listener {
 			}
 		}
 	}
-	
+
 	private void pickupAnimation(Item item, Player player) {
 		Location itemLoc = item.getLocation();
 		Location playerLoc = player.getEyeLocation();
 		Vector v;
-		
+
 		playerLoc.setY(playerLoc.getY() - 0.5);
-		v = new Vector(playerLoc.getX() - itemLoc.getX(), 
+		v = new Vector(playerLoc.getX() - itemLoc.getX(),
 				playerLoc.getY() - itemLoc.getY(),
 				playerLoc.getZ() - itemLoc.getZ());
-		
+
 		item.setVelocity(v);
 	}
 
