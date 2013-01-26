@@ -13,7 +13,7 @@
 #		shown in the inventory tip. (Keep this short!)
 #
 # filled_appearance: The appearance of the soul gem when it contains XP (item ID)
-#					 WARNING: Do _not_ use items like wool or other items that 
+#					 WARNING: Do _not_ use items like wool, water bottle or other items that 
 #					 uses durability by default.
 #
 # max_gem_stack_size: The maximum number of gem in a stack when they are filled
