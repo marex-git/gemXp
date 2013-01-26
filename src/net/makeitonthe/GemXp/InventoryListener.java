@@ -1,28 +1,30 @@
 /**
  * Small plugin to enable the storage of experience points in an item.
- * 
+ *
  * Rewrite of the original PearlXP created by Nebual of nebtown.info in March 2012.
- * 
+ *
  * rewrite by: Marex, Zonta.
- * 
+ *
  * contact us at : plugins@makeitonthe.net
- * 
+ *
  * Copyright (C) 2012 belongs to their respective owners
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package net.makeitonthe.GemXp;
+
+import java.util.logging.Level;
 
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -34,10 +36,11 @@ import org.bukkit.inventory.ItemStack;
 public class InventoryListener implements Listener {
 
 	private static final int QUICKBAR_SLOT_NB = 9;
-
+	private GemXp plugin;
 
 	public InventoryListener(GemXp plugin) {
 		plugin.getServer().getPluginManager().registerEvents(this, plugin);
+		this.plugin = plugin;
 	}
 
 
@@ -51,7 +54,7 @@ public class InventoryListener implements Listener {
 		int endSlot;
 
 		// we ignore throwing items and non soul gems items...
-		if(XpContainer.isAnXpContainer(event.getCurrentItem()) 
+		if(XpContainer.isAFilledXpContainer(event.getCurrentItem())
 				&& event.getSlotType() != InventoryType.SlotType.OUTSIDE) {
 
 			inv = event.getInventory();
@@ -61,7 +64,7 @@ public class InventoryListener implements Listener {
 				// Transfert stacks to the other "section" of an inventory
 				event.setCancelled(true);
 
-				if (inv.getType() == InventoryType.CHEST 
+				if (inv.getType() == InventoryType.CHEST
 						|| inv.getType() == InventoryType.DISPENSER) {
 					// In chest and dispenser we switch between player and entity inventory
 					// TODO Reverse iterate to match minecraft implementation better
@@ -76,6 +79,10 @@ public class InventoryListener implements Listener {
 					endSlot = inv.getSize();
 
 					stackGems(clickedGem, event, inv, startSlot, endSlot);
+
+				} else if (event.getSlotType() == InventoryType.SlotType.RESULT) {
+					// The player crafted gems
+					plugin.log(Level.WARNING, "Crafting gems is not supported");
 
 				} else {
 					// Use the player inventory
@@ -96,7 +103,7 @@ public class InventoryListener implements Listener {
 
 
 
-			} else if (XpContainer.isAnXpContainer(event.getCursor())) {
+			} else if (XpContainer.isAFilledXpContainer(event.getCursor())) {
 				// the gem is click with another gem
 				event.setCancelled(true);
 				cursorGem = new XpContainer(event.getCursor());
@@ -206,14 +213,14 @@ public class InventoryListener implements Listener {
 
 
 	/**
-	 * Stack gemToStack gems into all possible stack between the start and end 
+	 * Stack gemToStack gems into all possible stack between the start and end
 	 * index (start <= x < end); if no stack is available the stack is placed in
 	 * first empty space found.
-	 * 
+	 *
 	 * @param gemToStack
 	 * @param event {@link InventoryClickEvent} that triggered this action
 	 * @param inv inventory
-	 * @param start start index 
+	 * @param start start index
 	 * @param end end index
 	 */
 	private void stackGems(XpContainer gemToStack, InventoryClickEvent event, Inventory inv, int start, int end) {
