@@ -70,28 +70,29 @@ public class GemInteractListener implements Listener {
 		Action action = event.getAction();
 		int xp = 0;
 		double xpTaxed = 0;
+		int playerXp;
 
 		if (event.hasItem() && XpContainer.isAnXpContainer(event.getItem())) {
 			gem = new XpContainer(event.getItem());
 
 			if (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) {
 				player = event.getPlayer();
+				playerXp = getTotalExp(player);
 
 				if (gem.canStoreXp() && gem.getStoredXp() == 0) {
 					// The item possess no XP
 
-					 if (player.getTotalExperience() > 0 || player.getGameMode() == GameMode.CREATIVE) {
+					 if (playerXp > 0 || player.getGameMode() == GameMode.CREATIVE) {
 						// Store some XP in the item
 
-						if (player.getTotalExperience() > XpContainer.getmaxExp()
+						if (playerXp > XpContainer.getmaxExp()
 								+ XpContainer.getmaxExp()
 								* XpContainer.getXpTax()) {
 
 							xp = XpContainer.getmaxExp();
 							xpTaxed = xp * XpContainer.getXpTax();
 						} else {
-
-							xp = player.getTotalExperience();
+							xp = playerXp;
 							xpTaxed = xp * XpContainer.getXpTax();
 							xp = xp - (int) (xpTaxed);
 						}
@@ -207,7 +208,7 @@ public class GemInteractListener implements Listener {
 	 * @param p player
 	 */
 	private void removePlayerXp(int xp, Player p) {
-		int currentXp = p.getTotalExperience();
+		int currentXp = getTotalExp(p);
 
 		// Reset level to fix update bug
 		p.setTotalExperience(0);
@@ -297,6 +298,29 @@ public class GemInteractListener implements Listener {
 				lookingBlock.getZ() - player.getEyeLocation().getZ());
 
 		return v1.normalize();
+	}
+
+
+	/**
+	 * Return the total experience of a Player
+	 * WORKAROUND FOR BUKKIT BUG ON Player.getTotalExperience
+	 * @param p player
+	 * @return total experience points
+	 */
+	int getTotalExp(Player p) {
+		int xp = 0;
+
+		for (int i = 1; i <= p.getLevel(); i++) {
+			if (i <= 16) {
+				xp += 17;
+			} else if (i > 16 && i <= 31) {
+				xp += (i - 16) * 3 + 17;
+			} else if (i > 31) {
+				xp += (i - 31) * 7 + 62;
+			}
+		}
+
+		return (int) (xp + p.getExpToLevel() * p.getExp());
 	}
 
 }
