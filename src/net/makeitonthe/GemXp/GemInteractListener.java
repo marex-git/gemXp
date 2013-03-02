@@ -40,6 +40,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -229,7 +230,7 @@ public class GemInteractListener implements Listener {
 	 * @param inv inventory of the player
 	 */
 	private XpContainer storeAndStackXp(int xp, XpContainer item,  Player player) {
-		XpContainer similarStack;
+		ItemStack similarStack;
 		XpContainer newGem;
 		PlayerInventory inv = player.getInventory();
 		int slot = inv.firstEmpty();
@@ -238,7 +239,7 @@ public class GemInteractListener implements Listener {
 
 		newGem = new XpContainer(item.clone());
 		newGem.setStoredXp(xp);
-		similarStack = newGem.findSimilarStack(inv);
+		similarStack = GemInventory.findSimilarStack(inv, newGem);
 
 		if (item.getAmount() == 1 && similarStack == null) {
 

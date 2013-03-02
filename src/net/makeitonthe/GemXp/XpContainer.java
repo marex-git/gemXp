@@ -28,7 +28,6 @@ package net.makeitonthe.GemXp;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -334,50 +333,6 @@ public class XpContainer extends ItemStack {
 		}
 
 		return result;
-	}
-
-
-	/**
-	 * Find first not full stack with the same property. Return null if nothing
-	 * found.
-	 *
-	 * @param stack {@link XpContainer} with the property looking for
-	 * @param inv inventory
-	 * @return ItemStack found
-	 */
-	public XpContainer findSimilarStack(Inventory inv) {
-		return findSimilarStack(inv, 0, inv.getSize());
-	}
-
-
-	/**
-	 * Find the first not full stack of XpContainer with the same property starting at start
-	 * and ending at the index stop.
-	 *
-	 * @param stack {@link XpContainer} with the property looking for
-	 * @param inv inventory
-	 * @param start the index to start the search
-	 * @param stop
-	 * @return the XpContainer found or null if nothing found
-	 */
-	public XpContainer findSimilarStack(Inventory inv, int start, int stop) {
-		ItemStack[] items = inv.getContents();
-		XpContainer gem = null;
-		boolean found = false;
-
-		if (stop > items.length) stop = items.length;
-
-		for (int i = start; i < stop && !found; i++) {
-			if (items[i] != null) {
-				gem = new XpContainer(items[i]);
-
-				if (gem.getAmount() < gem.getMaxStackSize() && gem.equals(this)) {
-					found = true;
-				}
-			}
-		}
-
-		return found ? gem : null;
 	}
 
 	/**

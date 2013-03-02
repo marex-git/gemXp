@@ -31,7 +31,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
 
 public class InventoryListener implements Listener {
 
@@ -78,7 +77,7 @@ public class InventoryListener implements Listener {
 					startSlot = 0;
 					endSlot = inv.getSize();
 
-					stackGems(clickedGem, event, inv, startSlot, endSlot);
+					GemInventory.stackGems(clickedGem, event, inv, startSlot, endSlot);
 
 				} else if (event.getSlotType() == InventoryType.SlotType.RESULT) {
 					// The player crafted gems
@@ -98,7 +97,7 @@ public class InventoryListener implements Listener {
 					}
 
 					// Stack all gems and transfer the rest in empty slots...
-					stackGems(clickedGem, event, inv, startSlot, endSlot);
+					GemInventory.stackGems(clickedGem, event, inv, startSlot, endSlot);
 				}
 
 
@@ -116,7 +115,9 @@ public class InventoryListener implements Listener {
 				}
 
 				if (cursorGem.equals(clickedGem)) {
-					transfertGems(cursorGem, clickedGem, inv, event, transfertQty, true);
+					if (GemInventory.transferGems(cursorGem, clickedGem, transfertQty)) {
+						event.setCursor(null);
+					}
 
 				} else {
 					// Switch items
@@ -124,124 +125,7 @@ public class InventoryListener implements Listener {
 					event.setCurrentItem(cursorGem);
 				}
 			}
-
 		}
 
-	}
-
-
-	/**
-	 * Transfert all possible gems in the gemToTransfert stack into another stack of gems.
-	 * @param gemToTransfert
-	 * @param gemStack
-	 * @param inv inventory
-	 * @param event {@link InventoryClickEvent} that triggered the transfert
-	 * @param onCursor if the item to transfert is on the cursor
-	 * @return true if all the items where put into the gemStack
-	 */
-	private boolean transfertGems(XpContainer gemToTransfert, XpContainer gemStack, Inventory inv, InventoryClickEvent event, boolean onCursor) {
-		return transfertGems(gemToTransfert, gemStack, inv, event, gemToTransfert.getAmount(), onCursor);
-	}
-
-
-	/**
-	 * Transfert all possible gems in the gemToTransfert stack into another stack of gems.
-	 * @param gemToTransfert
-	 * @param gemStack
-	 * @param inv inventory
-	 * @param event {@link InventoryClickEvent} that triggered the transfert
-	 * @param quantity quantity to transfert
-	 * @param onCursor if the item to transfert is on the cursor
-	 * @return true if all the items where put into the gemStack
-	 */
-	private boolean transfertGems(XpContainer gemToTransfert, XpContainer gemStack, Inventory inv, InventoryClickEvent event, int quantity ,boolean onCursor) {
-		int transfertQty = 0;
-		boolean removedAll = false;
-
-
-		// Check the maximum possible to transfert
-		if (gemStack.getAmount() + quantity <= gemStack.getMaxStackSize()) {
-
-			transfertQty = quantity;
-			if (quantity == gemToTransfert.getAmount()) {
-				// We remove the stack completly
-				removedAll = true;
-
-				if (onCursor) {
-					event.setCursor(null);
-				} else {
-					event.setCurrentItem(null);
-				}
-			}
-
-		} else {
-			transfertQty = gemStack.getMaxStackSize() - gemStack.getAmount();
-		}
-
-		if (!removedAll) {
-			gemToTransfert.setAmount(gemToTransfert.getAmount() - transfertQty);
-		}
-
-		gemStack.setAmount(gemStack.getAmount() + transfertQty);
-
-		return removedAll;
-	}
-
-
-	/**
-	 * Find the first empty slot between the start and end index as start <= x < end
-	 * @param inv inventory
-	 * @param start index to start iterate
-	 * @param end index to end the iteration
-	 * @return the fist empty slot of the inventory
-	 */
-	private int firstEmptySlot(Inventory inv, int start, int end) {
-		ItemStack[] items = inv.getContents();
-		int slot = -1;
-		int i = start;
-
-		while(slot == -1 && i < end) {
-			if (items[i] == null) {
-				slot = i;
-			}
-
-			i++;
-		}
-
-		return slot;
-	}
-
-
-	/**
-	 * Stack gemToStack gems into all possible stack between the start and end
-	 * index (start <= x < end); if no stack is available the stack is placed in
-	 * first empty space found.
-	 *
-	 * @param gemToStack
-	 * @param event {@link InventoryClickEvent} that triggered this action
-	 * @param inv inventory
-	 * @param start start index
-	 * @param end end index
-	 */
-	private void stackGems(XpContainer gemToStack, InventoryClickEvent event, Inventory inv, int start, int end) {
-		boolean finish = false;
-		XpContainer similarGem;
-		int emptySlot = firstEmptySlot(inv, start, end);
-
-		while (!finish) {
-			similarGem = gemToStack.findSimilarStack(inv, start, end);
-
-			if (similarGem != null) {
-				finish = transfertGems(gemToStack, similarGem, inv, event, false);
-
-			} else {
-				if (emptySlot >= 0) {
-					inv.setItem(emptySlot, gemToStack);
-					event.setCurrentItem(null); // remove the transfered gem
-				}
-
-				finish = true;
-			}
-		}
 	}
 }

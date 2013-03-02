@@ -46,8 +46,8 @@ public class GemPickupListener implements Listener {
 		Item eventItem = event.getItem();
 		ItemStack pickUpItem = eventItem.getItemStack();
 		Inventory inv;
-		XpContainer pickUpGem;
-		XpContainer similarGem;
+		ItemStack pickUpGem;
+		ItemStack similarGem;
 
 		if (XpContainer.isAFilledXpContainer(pickUpItem)) {
 			event.setCancelled(true);
@@ -56,7 +56,7 @@ public class GemPickupListener implements Listener {
 
 			// find a stack to add on top or puts it in an empty space,
 			// otherwise let it on the ground
-			similarGem = pickUpGem.findSimilarStack(inv);
+			similarGem = GemInventory.findSimilarStack(inv, pickUpGem);
 			if (similarGem != null) {
 
 				while (pickUpGem.getAmount() > 0 && similarGem != null) {
@@ -64,7 +64,7 @@ public class GemPickupListener implements Listener {
 					pickUpGem.setAmount(pickUpGem.getAmount() - 1);
 					pickupAnimation(eventItem, event.getPlayer());
 
-					similarGem = pickUpGem.findSimilarStack(inv);
+					similarGem = GemInventory.findSimilarStack(inv, pickUpGem);
 				}
 
 				if (pickUpGem.getAmount() == 0) {
