@@ -1,24 +1,24 @@
 /**
  * Small plugin to enable the storage of experience points in an item.
- * 
+ *
  * Rewrite of the original PearlXP created by Nebual of nebtown.info in March 2012.
- * 
+ *
  * rewrite by: Marex, Zonta.
- * 
+ *
  * contact us at : plugins@makeitonthe.net
- * 
+ *
  * Copyright (C) 2012 belongs to their respective owners
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -44,7 +44,7 @@ public class GemXp extends JavaPlugin {
 	private static final int CONFIG_VERSION = 4;
 	private List<String> messages;
 
-	public enum MsgKeys { 
+	public enum MsgKeys {
 
 		IMBUE_XP("filled_xp"),
 		RESTORE_XP("restore_xp");
@@ -64,8 +64,6 @@ public class GemXp extends JavaPlugin {
 	public void onEnable() {
 		loadConfig();
 		new GemInteractListener(this);
-		new GemPickupListener(this);
-		new InventoryListener(this);
 
 		logInfo("Plugin loading complete. Plugin enabled.");
 	}
@@ -105,7 +103,11 @@ public class GemXp extends JavaPlugin {
 		// no change of appearance if this config doesn't exists
 		XpContainer.setImbuedItemId(getConfig().getInt("filled_appearance", XpContainer.getItemId()));
 
-		XpContainer.setMaxStackSize(getConfig().getInt("max_gem_stack_size"));
+		// We do not support custom stack for now...
+		if (getConfig().contains("max_gem_stack_size")) {
+			log(Level.WARNING, "Doesn't support custom stack size since 1.5...");
+			XpContainer.setMaxStackSize(Material.getMaterial(XpContainer.getImbuedItemId()).getMaxStackSize());
+		}
 
 		// set the default value if the tax doesn't make sense
 		if (getConfig().getDouble("xp_tax") > XpContainer.MAX_TAX) {

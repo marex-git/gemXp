@@ -38,7 +38,7 @@ item_id: 368
 item_name: Soul Gem
 hint: filled with
 filled_appearance: 381
-max_gem_stack_size: 16
+#max_gem_stack_size: 16 # not compatible for 1.5 and up.
 xp_tax: 10
 
 Messages:
