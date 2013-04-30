@@ -25,6 +25,8 @@
 
 package net.makeitonthe.GemXp;
 
+import java.util.HashMap;
+
 import net.makeitonthe.GemXp.GemXp.MsgKeys;
 
 import org.bukkit.ChatColor;
@@ -230,56 +232,37 @@ public class GemInteractListener implements Listener {
 	 * @param inv inventory of the player
 	 */
 	private XpContainer storeAndStackXp(int xp, XpContainer item,  Player player) {
-		ItemStack similarStack;
 		XpContainer newGem;
 		PlayerInventory inv = player.getInventory();
-		int slot = inv.firstEmpty();
 		Item droppedItem;
 		Vector lookingVector;
 
-		newGem = plugin.getGemFactory().make(item.clone());
+		newGem = plugin.getGemFactory().make(item.clone(), 1);
 		newGem.setStoredXp(xp);
-		similarStack = GemInventory.findSimilarStack(inv, newGem);
 
-		if (item.getAmount() == 1 && similarStack == null) {
+		HashMap<Integer, ItemStack> rest = inv.addItem(newGem);
 
-			inv.setItemInHand(newGem);
-
-		} else { // We can unstack stuff!
-
-			if (similarStack != null) {
-				// Stack on top of
-
-				similarStack.setAmount(similarStack.getAmount() + 1);
-
-			} else { // no similar stack
-
-				// Only create one item...
-				newGem.setAmount(1);
-
-				if (slot >= 0) {
-
-					inv.setItem(slot, newGem);
-
-				} else {
-					// The item is in a stack and cannot be unstack
-					droppedItem = player.getWorld().dropItem(player.getEyeLocation().subtract(new Vector(0, 0.2, 0)), newGem);
-					plugin.getServer().getPluginManager().callEvent(new PlayerDropItemEvent(player, droppedItem));
-
-					// We drop the item where the player is looking
-					lookingVector = getLookingVector(player);
-					lookingVector.multiply(0.4);
-					droppedItem.setVelocity(lookingVector);
-				}
-			}
-
-			// Remove the item used
+		if (!rest.isEmpty()) { // We have no more room
 			if (item.getAmount() == 1) {
-				inv.setItemInHand(null);
-			} else {
-				item.setAmount(item.getAmount() - 1);
-
+				inv.setItemInHand(newGem);
+				return newGem;
 			}
+
+			// The item is in a stack and cannot be unstack
+			droppedItem = player.getWorld().dropItem(player.getEyeLocation().subtract(new Vector(0, 0.2, 0)), newGem);
+			plugin.getServer().getPluginManager().callEvent(new PlayerDropItemEvent(player, droppedItem));
+
+			// We drop the item where the player is looking
+			lookingVector = getLookingVector(player);
+			lookingVector.multiply(0.4);
+			droppedItem.setVelocity(lookingVector);
+		}
+
+		// Remove the item used
+		if (item.getAmount() == 1) {
+			inv.setItemInHand(null);
+		} else {
+			item.setAmount(item.getAmount() - 1);
 		}
 
 		return newGem;

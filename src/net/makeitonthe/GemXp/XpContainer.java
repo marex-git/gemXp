@@ -67,22 +67,6 @@ public class XpContainer extends ItemStack {
 	public XpContainer(ItemStack stack) {
 		super(stack);
 		this.itemStack = stack;
-
-	}
-
-	public XpContainer(ItemStack stack, int itemId, int imbuedItemId, String itemName,
-			String itemHint, double xpTax, int maxExp, int stackSize) {
-
-		this(stack);
-		this.itemId = itemId;
-		this.imbuedItemId = imbuedItemId;
-		this.maxExp = setMaxExp(maxExp);
-
-		this.itemName = itemName;
-		this.itemHint = itemHint;
-
-		this.xpTax = xpTax;
-		this.stackSize = stackSize;
 	}
 
 	public XpContainer(int itemId, int imbuedItemId, String itemName,
@@ -100,6 +84,40 @@ public class XpContainer extends ItemStack {
 
 		this.itemStack = null;
 	}
+
+	public XpContainer(ItemStack stack, int itemId, int imbuedItemId, String itemName,
+			String itemHint, double xpTax, int maxExp, int stackSize) {
+
+		this(stack);
+		this.itemId = itemId;
+		this.imbuedItemId = imbuedItemId;
+		this.maxExp = setMaxExp(maxExp);
+
+		this.itemName = itemName;
+		this.itemHint = itemHint;
+
+		this.xpTax = xpTax;
+		this.stackSize = stackSize;
+	}
+
+	public XpContainer(ItemStack stack, int itemId, int imbuedItemId, String itemName,
+			String itemHint, double xpTax, int maxExp, int stackSize, int amount) {
+
+		this(stack);
+		this.itemId = itemId;
+		this.imbuedItemId = imbuedItemId;
+		this.maxExp = setMaxExp(maxExp);
+
+		this.itemName = itemName;
+		this.itemHint = itemHint;
+
+		this.xpTax = xpTax;
+		this.stackSize = stackSize;
+
+		setAmount(amount);
+	}
+
+
 
 
 	/**
@@ -239,29 +257,6 @@ public class XpContainer extends ItemStack {
 			max = getType().getMaxStackSize();
 		}
 		return max;
-	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		boolean result = false;
-
-		if (this == obj)
-			return true;
-		if (getClass() != obj.getClass())
-			return false;
-
-		XpContainer other = (XpContainer) obj;
-
-		if (other.canContainXp() == this.canContainXp()
-				&& other.canStoreXp() == this.canStoreXp()
-				&& other.getStoredXp() == this.getStoredXp()) {
-			result = true;
-		}
-
-		return result;
 	}
 
 	/**

@@ -57,14 +57,39 @@ public class GemFactory {
 	}
 
 
+	/**
+	 * Create a new XpContainer object with the right attributes
+	 * @param stack to be gemified
+	 * @return XpContainer gem
+	 */
 	public XpContainer make(ItemStack stack) {
 		return new XpContainer(stack, itemId, imbuedItemId, itemName, itemHint, xpTax, maxExp, stackSize);
 	}
 
+	/**
+	 * Create a new XpContainer object with the right attributes and with amount quantity
+	 * @param stack to be gemified
+	 * @param amount in the XpContainer stack
+	 * @return XpContainer gem
+	 */
+	public XpContainer make(ItemStack stack, int amount) {
+		return new XpContainer(stack, itemId, imbuedItemId, itemName, itemHint, xpTax, maxExp, stackSize, amount);
+	}
+
+	/**
+	 * Test if the stack is a gem
+	 * @param stack
+	 * @return true if the stack can be a gem
+	 */
 	public boolean isAGem(ItemStack stack) {
 		return gem.isAnXpContainer(stack);
 	}
 
+	/**
+	 * Test if the stack is a filled gem
+	 * @param stack
+	 * @return true if the stack can be a filled gem
+	 */
 	public boolean isAFilledGem(ItemStack stack) {
 		return gem.isAFilledXpContainer(stack);
 	}
