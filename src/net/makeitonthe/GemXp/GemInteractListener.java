@@ -73,8 +73,8 @@ public class GemInteractListener implements Listener {
 		double xpTaxed = 0;
 		int playerXp;
 
-		if (event.hasItem() && XpContainer.isAnXpContainer(event.getItem())) {
-			gem = new XpContainer(event.getItem());
+		if (event.hasItem() && plugin.getGemFactory().isAGem(event.getItem())) {
+			gem = plugin.getGemFactory().make(event.getItem());
 
 			if (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) {
 				player = event.getPlayer();
@@ -86,20 +86,20 @@ public class GemInteractListener implements Listener {
 					 if (playerXp > 0 || player.getGameMode() == GameMode.CREATIVE) {
 						// Store some XP in the item
 
-						if (playerXp > XpContainer.getmaxExp()
-								+ XpContainer.getmaxExp()
-								* XpContainer.getXpTax()) {
+						if (playerXp > gem.getmaxExp()
+								+ gem.getmaxExp()
+								* gem.getXpTax()) {
 
-							xp = XpContainer.getmaxExp();
-							xpTaxed = xp * XpContainer.getXpTax();
+							xp = gem.getmaxExp();
+							xpTaxed = xp * gem.getXpTax();
 						} else {
 							xp = playerXp;
-							xpTaxed = xp * XpContainer.getXpTax();
+							xpTaxed = xp * gem.getXpTax();
 							xp = xp - (int) (xpTaxed);
 						}
 
 						if (player.getGameMode() == GameMode.CREATIVE) {
-							gem = storeAndStackXp(XpContainer.getmaxExp(), gem, player);
+							gem = storeAndStackXp(gem.getmaxExp(), gem, player);
 						} else {
 							gem = storeAndStackXp(xp, gem, player);
 							removePlayerXp((int) (xp + xpTaxed), player);
@@ -152,7 +152,7 @@ public class GemInteractListener implements Listener {
 	 */
 	private String formatMsg(String msg, int xp, int playerXp) {
 		if (msg == null) return null;
-		String[] values = { XpContainer.getItemName().toLowerCase(),
+		String[] values = { plugin.getGemFactory().getItemName().toLowerCase(),
 				String.valueOf(xp),
 				String.valueOf(playerXp) };
 
@@ -237,7 +237,7 @@ public class GemInteractListener implements Listener {
 		Item droppedItem;
 		Vector lookingVector;
 
-		newGem = new XpContainer(item.clone());
+		newGem = plugin.getGemFactory().make(item.clone());
 		newGem.setStoredXp(xp);
 		similarStack = GemInventory.findSimilarStack(inv, newGem);
 

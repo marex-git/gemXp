@@ -39,6 +39,7 @@ public class GemXp extends JavaPlugin {
 	private static final Logger LOGGER = Logger.getLogger("Minecraft");
 	private static final String LOGGER_PREFIX = "[GemXP]";
 
+	private GemFactory gemFactory;
 
 	/****** Configuration options ******/
 	private static final int CONFIG_VERSION = 4;
@@ -78,7 +79,14 @@ public class GemXp extends JavaPlugin {
 	 */
 	public void loadConfig() {
 		ConfigurationSection msgSection;
+
+		int itemId;
+		int imbuedItemId;
+		int maxExp;
 		String itemName;
+		String itemHint;
+		double xpTax;
+		int stackSize;
 
 		if (getConfig().getInt("configversion", 0) < CONFIG_VERSION) {
 			saveResource("config.yml", true);
@@ -87,35 +95,38 @@ public class GemXp extends JavaPlugin {
 			reloadConfig();
 		}
 
-		// set the max experience level and check if it exceeded it...
-		if (!XpContainer.setMaxExp(getConfig().getInt("max_level"))) {
-			log(Level.WARNING, "maxLevel exceeds possible limits! Please modify your config file.");
-			logInfo("Setting maxLevel to " + XpContainer.MAX_STORAGE);
-		}
-
-		XpContainer.setItemId(getConfig().getInt("item_id"));
+		itemId = getConfig().getInt("item_id");
 
 		// take the default item name if no config exists
-		itemName = Material.getMaterial(XpContainer.getItemId()).toString();
-		XpContainer.setItemName(getConfig().getString("item_name", itemName.toLowerCase()));
-		XpContainer.setItemHint(getConfig().getString("hint", ""));
+		itemName = Material.getMaterial(itemId).toString();
+		itemName = getConfig().getString("item_name", itemName.toLowerCase());
+		itemHint = getConfig().getString("hint", "");
 
 		// no change of appearance if this config doesn't exists
-		XpContainer.setImbuedItemId(getConfig().getInt("filled_appearance", XpContainer.getItemId()));
+		imbuedItemId = getConfig().getInt("filled_appearance", itemId);
 
 		// We do not support custom stack for now...
 		if (getConfig().contains("max_gem_stack_size")) {
 			log(Level.WARNING, "Doesn't support custom stack size since 1.5...");
-			XpContainer.setMaxStackSize(Material.getMaterial(XpContainer.getImbuedItemId()).getMaxStackSize());
+		}
+		stackSize = Material.getMaterial(imbuedItemId).getMaxStackSize();
+
+		// set the max experience level and check if it exceeded it...
+		if (getConfig().getInt("max_level") > XpContainer.MAX_STORAGE) {
+			log(Level.WARNING, "maxLevel exceeds possible limits! Please modify your config file.");
+			logInfo("Setting maxLevel to " + XpContainer.MAX_STORAGE);
+			maxExp = XpContainer.MAX_STORAGE;
+		} else {
+			maxExp = getConfig().getInt("max_level");
 		}
 
 		// set the default value if the tax doesn't make sense
 		if (getConfig().getDouble("xp_tax") > XpContainer.MAX_TAX) {
-			XpContainer.setXpTax((getConfig().getDefaults().getDouble("xp_tax")/100.0));
+			xpTax = getConfig().getDefaults().getDouble("xp_tax") / 100.0;
 			log(Level.WARNING, "xp_tax exceeds possible limits! Please modify your config file.");
 			logInfo("Setting xp_tax to " + getConfig().getDefaults().getDouble("xp_tax") + "%");
 		} else {
-			XpContainer.setXpTax((getConfig().getDouble("xp_tax")/100.0));
+			xpTax = getConfig().getDouble("xp_tax") / 100.0;
 		}
 
 		// Loading custom texts
@@ -127,6 +138,8 @@ public class GemXp extends JavaPlugin {
 				messages.add(msgSection.getString(key.getKey(), null));
 			}
 		}
+
+		gemFactory = new GemFactory(itemId, imbuedItemId, itemName, itemHint, xpTax, maxExp, stackSize);
 
 	}
 
@@ -162,5 +175,12 @@ public class GemXp extends JavaPlugin {
 		}
 
 		return msg;
+	}
+
+	/**
+	 * @return the gemFactory
+	 */
+	public GemFactory getGemFactory() {
+		return gemFactory;
 	}
 }

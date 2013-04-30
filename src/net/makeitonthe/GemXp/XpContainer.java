@@ -52,15 +52,15 @@ public class XpContainer extends ItemStack {
 	 */
 	public static String LORE_FORMAT = "§r§7"; // reset format + gray
 
-	private static int itemId;
-	private static int imbuedItemId;
-	private static int maxExp;
+	private int itemId;
+	private int imbuedItemId;
+	private int maxExp;
 
-	private static String itemName;
-	private static String itemHint;
+	private String itemName;
+	private String itemHint;
 
-	private static double xpTax;
-	private static int stackSize;
+	private double xpTax;
+	private int stackSize;
 
 	private ItemStack itemStack;
 
@@ -70,18 +70,49 @@ public class XpContainer extends ItemStack {
 
 	}
 
+	public XpContainer(ItemStack stack, int itemId, int imbuedItemId, String itemName,
+			String itemHint, double xpTax, int maxExp, int stackSize) {
+
+		this(stack);
+		this.itemId = itemId;
+		this.imbuedItemId = imbuedItemId;
+		this.maxExp = setMaxExp(maxExp);
+
+		this.itemName = itemName;
+		this.itemHint = itemHint;
+
+		this.xpTax = xpTax;
+		this.stackSize = stackSize;
+	}
+
+	public XpContainer(int itemId, int imbuedItemId, String itemName,
+			String itemHint, double xpTax, int maxExp, int stackSize) {
+
+		this.itemId = itemId;
+		this.imbuedItemId = imbuedItemId;
+		this.maxExp = setMaxExp(maxExp);
+
+		this.itemName = itemName;
+		this.itemHint = itemHint;
+
+		this.xpTax = xpTax;
+		this.stackSize = stackSize;
+
+		this.itemStack = null;
+	}
+
 
 	/**
 	 * Return true if the ItemStack has the capability of storing experience points
 	 * @return true if it can store XP, false otherwise
 	 */
-	public static boolean isAnXpContainer(ItemStack stack) {
+	public boolean isAnXpContainer(ItemStack stack) {
 		int itemId = 0;
 		boolean container = false;
 
 		if (stack != null) {
 			itemId = stack.getTypeId();
-			container = itemId == getImbuedItemId() || itemId == getItemId();
+			container = itemId == imbuedItemId || itemId == this.itemId;
 		}
 
 		return container;
@@ -91,11 +122,11 @@ public class XpContainer extends ItemStack {
 	 * Return true if the ItemStack contains experience points
 	 * @return true if it contain XP, false otherwise
 	 */
-	public static boolean isAFilledXpContainer(ItemStack stack) {
+	public boolean isAFilledXpContainer(ItemStack stack) {
 		boolean container = false;
 
 		if (stack != null) {
-			container = (stack.getTypeId() == getImbuedItemId() && stack.getDurability() > 0);
+			container = (stack.getTypeId() == imbuedItemId && stack.getDurability() > 0);
 		}
 
 		return container;
@@ -106,7 +137,7 @@ public class XpContainer extends ItemStack {
 	 * @return true if it can contain XP, false otherwise
 	 */
 	public boolean canContainXp() {
-		return getTypeId() == getImbuedItemId();
+		return getTypeId() == imbuedItemId;
 	}
 
 	/**
@@ -114,7 +145,7 @@ public class XpContainer extends ItemStack {
 	 * @return true if it can store XP, false otherwise
 	 */
 	public boolean canStoreXp() {
-		return getTypeId() == getItemId();
+		return getTypeId() == itemId;
 	}
 
 
@@ -123,7 +154,7 @@ public class XpContainer extends ItemStack {
 	 */
 	@Override
 	public XpContainer clone() {
-		return new XpContainer( new ItemStack(getItemStack()) );
+		return new XpContainer( new ItemStack(itemStack), itemId, imbuedItemId, itemName, itemHint, xpTax, maxExp, stackSize );
 
 	}
 
@@ -133,7 +164,7 @@ public class XpContainer extends ItemStack {
 	 */
 	@Override
 	public int getAmount() {
-		return getItemStack().getAmount();
+		return itemStack.getAmount();
 	}
 
 	/*
@@ -142,7 +173,7 @@ public class XpContainer extends ItemStack {
 	 */
 	@Override
 	public void setAmount(int i) {
-		getItemStack().setAmount(i);
+		itemStack.setAmount(i);
 	}
 
 	/**
@@ -177,42 +208,19 @@ public class XpContainer extends ItemStack {
 		setDurability((short) xp);
 	}
 
-	/**
-	 * @return the itemId used as the empty containers
-	 */
-	public static int getItemId() {
-		return itemId;
-	}
-
-
-	/**
-	 * @return the ItemId used as the containers
-	 */
-	public static int getImbuedItemId() {
-		return imbuedItemId;
-	}
-
 
 	/**
 	 * @return the maximum level cap of the containers
 	 */
-	public static int getmaxExp() {
+	public int getmaxExp() {
 		return maxExp;
-	}
-
-
-	/**
-	 * @return the stack
-	 */
-	public ItemStack getItemStack() {
-		return itemStack;
 	}
 
 
 	/**
 	 * @return the xpTax
 	 */
-	public static double getXpTax() {
+	public double getXpTax() {
 		return xpTax;
 	}
 
@@ -232,85 +240,6 @@ public class XpContainer extends ItemStack {
 		}
 		return max;
 	}
-
-
-	/**
-	 * @return the itemName of the containers
-	 */
-	protected static String getItemName() {
-		return itemName;
-	}
-
-
-	/**
-	 * @return the itemHint
-	 */
-	protected static String getItemHint() {
-		return itemHint;
-	}
-
-
-	/**
-	 * @param imbuedItemId the imbuedItemId to set
-	 */
-	protected static void setImbuedItemId(int imbuedItemId) {
-		XpContainer.imbuedItemId = imbuedItemId;
-	}
-
-
-	/**
-	 * @param itemId the itemId to set
-	 */
-	protected static void setItemId(int itemId) {
-		XpContainer.itemId = itemId;
-	}
-
-
-	/**
-	 * @param maxExp the maximum experience points cap  to set
-	 */
-	protected static boolean setMaxExp(int maxExp) {
-		boolean result = false;
-		// check if maxLevel fits in a short (2^15 - 1)
-		if (maxExp > MAX_STORAGE) {
-			XpContainer.maxExp = MAX_STORAGE;
-		} else {
-			XpContainer.maxExp = maxExp;
-			result = true;
-		}
-		return result;
-	}
-
-
-	/**
-	 * @param itemName the itemName to set
-	 */
-	protected static void setItemName(String itemName) {
-		XpContainer.itemName = itemName;
-	}
-
-	/**
-	 * @param itemHint the itemHint to set
-	 */
-	protected static void setItemHint(String itemHint) {
-		XpContainer.itemHint = itemHint;
-	}
-
-	/**
-	 * @param xpTax the xpTax to set
-	 */
-	protected static void setXpTax(double xpTax) {
-		XpContainer.xpTax = xpTax;
-	}
-
-
-	/**
-	 * @param maxStackSize the maxStackSize to set
-	 */
-	protected static void setMaxStackSize(int maxStackSize) {
-		XpContainer.stackSize = maxStackSize;
-	}
-
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
@@ -336,6 +265,17 @@ public class XpContainer extends ItemStack {
 	}
 
 	/**
+	 * @param maxExp the maximum experience points cap  to set
+	 */
+	private static int setMaxExp(int maxExp) {
+		// check if maxLevel fits in a short (2^15 - 1)
+		if (maxExp > MAX_STORAGE)
+			return MAX_STORAGE;
+		else
+			return maxExp;
+	}
+
+	/**
 	 * Prepare the container by changing is typeid, display name and adding a
 	 * new lore indicating the stored experience points
 	 *
@@ -344,11 +284,11 @@ public class XpContainer extends ItemStack {
 	private void initContainer(int xp) {
 		ItemMeta itemMeta = this.getItemMeta();
 		List<String> lores = itemMeta.getLore();
-		String lore = LORE_FORMAT + getItemHint() + " " + xp + "xp";
+		String lore = LORE_FORMAT + itemHint + " " + xp + "xp";
 
 		// Change appearance and display name
-		setTypeId(getImbuedItemId());
-		itemMeta.setDisplayName(DISPLAY_NAME_FORMAT + getItemName());
+		setTypeId(imbuedItemId);
+		itemMeta.setDisplayName(DISPLAY_NAME_FORMAT + itemName);
 
 		// Add description
 		if (lores != null) {
@@ -376,7 +316,7 @@ public class XpContainer extends ItemStack {
 		this.setItemMeta(itemMeta);
 
 		// Change appearance
-		setTypeId(getItemId());
+		setTypeId(itemId);
 	}
 
 }

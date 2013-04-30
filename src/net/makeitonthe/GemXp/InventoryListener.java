@@ -53,11 +53,11 @@ public class InventoryListener implements Listener {
 		int endSlot;
 
 		// we ignore throwing items and non soul gems items...
-		if(XpContainer.isAFilledXpContainer(event.getCurrentItem())
+		if(plugin.getGemFactory().isAFilledGem(event.getCurrentItem())
 				&& event.getSlotType() != InventoryType.SlotType.OUTSIDE) {
 
 			inv = event.getInventory();
-			clickedGem = new XpContainer(event.getCurrentItem());
+			clickedGem = plugin.getGemFactory().make(event.getCurrentItem());
 
 			if (event.isShiftClick()) {
 				// Transfert stacks to the other "section" of an inventory
@@ -102,10 +102,10 @@ public class InventoryListener implements Listener {
 
 
 
-			} else if (XpContainer.isAFilledXpContainer(event.getCursor())) {
+			} else if (plugin.getGemFactory().isAFilledGem(event.getCursor())) {
 				// the gem is click with another gem
 				event.setCancelled(true);
-				cursorGem = new XpContainer(event.getCursor());
+				cursorGem = plugin.getGemFactory().make(event.getCursor());
 
 				//check if stacking is possible and stack, leftover are on cursor, if not switch the item
 				if (event.isLeftClick()) {
@@ -126,6 +126,5 @@ public class InventoryListener implements Listener {
 				}
 			}
 		}
-
 	}
 }
