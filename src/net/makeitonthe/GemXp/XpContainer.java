@@ -1,9 +1,9 @@
 /**
  * Small plugin to enable the storage of experience points in an item.
  *
- * Rewrite of the original PearlXP created by Nebual of nebtown.info in March 2012.
+ * Fork of the original PearlXP created by Nebual of nebtown.info in March 2012.
  *
- * rewrite by: Marex, Zonta.
+ * Fork by: Marex, Zonta.
  *
  * contact us at : plugins@makeitonthe.net
  *

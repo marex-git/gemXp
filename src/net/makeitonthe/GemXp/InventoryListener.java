@@ -1,9 +1,9 @@
 /**
  * Small plugin to enable the storage of experience points in an item.
  *
- * Rewrite of the original PearlXP created by Nebual of nebtown.info in March 2012.
+ * Fork of the original PearlXP created by Nebual of nebtown.info in March 2012.
  *
- * rewrite by: Marex, Zonta.
+ * Fork by: Marex, Zonta.
  *
  * contact us at : plugins@makeitonthe.net
  *
@@ -22,6 +22,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 package net.makeitonthe.GemXp;
 
 import java.util.logging.Level;
