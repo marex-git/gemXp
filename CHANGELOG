@@ -1,3 +1,10 @@
+Release v0.5
+============
+
+  * Added permissions
+  * Some refactoring
+  * Added MCStats Metrics
+
 Release v0.4
 =========
   * Update to 1.5.1

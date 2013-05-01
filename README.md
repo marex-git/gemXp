@@ -12,4 +12,6 @@ This plugin is release under the [GNU General Public License version 3 (GPLv3)](
 ChangeLog of current version
 ----------
 
-  * Fixing issue #20 Gems giving Enchantment and Anvil XP
+  * Added permissions
+  * Some refactoring
+  * Added MCStats Metrics
