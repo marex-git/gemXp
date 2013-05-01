@@ -211,8 +211,8 @@ public class XpContainer extends ItemStack {
 	 */
 	public void setStoredXp(int xp) {
 		// check for overflow
-		if (xp > getmaxExp()) {
-			xp = getmaxExp();
+		if (xp > getMaxExp()) {
+			xp = getMaxExp();
 		}
 
 		// Change appearance
@@ -230,7 +230,7 @@ public class XpContainer extends ItemStack {
 	/**
 	 * @return the maximum level cap of the containers
 	 */
-	public int getmaxExp() {
+	public int getMaxExp() {
 		return maxExp;
 	}
 
