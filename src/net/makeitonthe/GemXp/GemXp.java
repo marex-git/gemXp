@@ -25,6 +25,7 @@
 
 package net.makeitonthe.GemXp;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -65,6 +66,14 @@ public class GemXp extends JavaPlugin {
 	public void onEnable() {
 		loadConfig();
 		new GemInteractListener(this);
+
+		try {
+		    MetricsLite metrics = new MetricsLite(this);
+		    metrics.start();
+		} catch (IOException e) {
+		    // Failed to submit the stats
+			log(Level.WARNING, "Failed to send metrics.");
+		}
 
 		logInfo("Plugin loading complete. Plugin enabled.");
 	}
