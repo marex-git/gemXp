@@ -1,3 +1,25 @@
 name: GemXP
 main: net.makeitonthe.GemXp.GemXp
-version: 0.4
+version: 0.5
+
+permissions:
+
+  gemxp.admin:
+    description: Gives access to all GemXp features without the penalty
+    children:
+      gemxp.storeXp: true
+      gemxp.restoreXp: true
+      gemxp.noTax: true
+    default: false
+      
+  gemxp.storeXp:
+    description: Allows you to store experience points in a gem
+    default: true
+    
+  gemxp.restoreXp:
+    description: Allows you to restore experience points from a imbued gem
+    default: true
+
+  gemxp.noTax:
+    description: Disable experiences losses when imbuing a gem
+    default: false

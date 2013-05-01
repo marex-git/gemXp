@@ -84,24 +84,31 @@ public class GemInteractListener implements Listener {
 
 				if (gem.canStoreXp() && gem.getStoredXp() == 0) {
 					// The item possess no XP
+					if (!player.hasPermission("gemxp.storeXp")) return;
 
-					 if (playerXp > 0 || player.getGameMode() == GameMode.CREATIVE) {
+					if (playerXp > 0 || player.getGameMode() == GameMode.CREATIVE) {
 						// Store some XP in the item
 
-						if (playerXp > gem.getmaxExp()
-								+ gem.getmaxExp()
-								* gem.getXpTax()) {
+						if (!player.hasPermission("gemxp.noTax")) { // Skip taxes if player has special permission
+							if (playerXp > gem.getMaxExp() + gem.getMaxExp() * gem.getXpTax()) {
 
-							xp = gem.getmaxExp();
-							xpTaxed = xp * gem.getXpTax();
+								xp = gem.getMaxExp();
+								xpTaxed = xp * gem.getXpTax();
+							} else {
+								xp = playerXp;
+								xpTaxed = xp * gem.getXpTax();
+								xp -= (int) (xpTaxed);
+							}
 						} else {
-							xp = playerXp;
-							xpTaxed = xp * gem.getXpTax();
-							xp = xp - (int) (xpTaxed);
+							if (playerXp > gem.getMaxExp()) {
+								xp = gem.getMaxExp();
+							} else {
+								xp = playerXp;
+							}
 						}
 
 						if (player.getGameMode() == GameMode.CREATIVE) {
-							gem = storeAndStackXp(gem.getmaxExp(), gem, player);
+							gem = storeAndStackXp(gem.getMaxExp(), gem, player);
 						} else {
 							gem = storeAndStackXp(xp, gem, player);
 							removePlayerXp((int) (xp + xpTaxed), player);
@@ -117,6 +124,7 @@ public class GemInteractListener implements Listener {
 
 				} else if (gem.canContainXp() && gem.getStoredXp() > 0) {
 					// Restore XP to the player
+					if (!player.hasPermission("gemxp.restoreXp")) return;
 
 					xp = gem.getStoredXp();
 
